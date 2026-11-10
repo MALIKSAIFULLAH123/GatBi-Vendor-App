@@ -1,0 +1,269 @@
+class GetAttributesModel {
+  const GetAttributesModel({this.success = false, this.attributes = const []});
+
+  final bool success;
+  final List<GetAttributeModel> attributes;
+
+  // ============================================================
+  // From JSON
+  // ============================================================
+
+  factory GetAttributesModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const GetAttributesModel();
+    }
+
+    return GetAttributesModel(
+      success: _parseBool(json['success']),
+      attributes: _parseList(json['attributes'], GetAttributeModel.fromJson),
+    );
+  }
+
+  // ============================================================
+  // To JSON
+  // ============================================================
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'attributes': attributes.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+      return value.toLowerCase() == 'true' || value == '1';
+    }
+    if (value is num) return value != 0;
+    return false;
+  }
+
+  static List<T> _parseList<T>(
+    dynamic value,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (value is! List) return const [];
+    return value
+        .whereType<Map>()
+        .map((item) => fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+}
+
+// ============================================================
+// Get Attribute Model
+// ============================================================
+
+class GetAttributeModel {
+  const GetAttributeModel({
+    this.id,
+    this.attributeId,
+    this.name,
+    this.adminLabel,
+    this.slug,
+    this.inputType,
+    this.isActive = false,
+    this.isOwn = false,
+    this.values = const [],
+  });
+
+  /// DB primary key (server-side).
+  final int? id;
+
+  /// Server's attribute_id.
+  ///
+  /// This is what must be sent to variant / attribute APIs.
+  /// Example: 4 (Color), 2 (Specs)
+  final int? attributeId;
+
+  final String? name;
+  final String? adminLabel;
+  final String? slug;
+  final String? inputType;
+
+  /// Attribute active/inactive status.
+  final bool isActive;
+
+  /// Whether attribute was created by the vendor.
+  final bool isOwn;
+
+  /// Attribute values / variants.
+  final List<GetAttributeValueModel> values;
+
+  // ============================================================
+  // Convenience
+  // ============================================================
+
+  /// The id that should be sent to variant_attributes / attributes.
+  ///
+  /// Prefers `attributeId`, falls back to `id`.
+  int? get effectiveAttributeId => attributeId ?? id;
+
+  // ============================================================
+  // From JSON
+  // ============================================================
+
+  factory GetAttributeModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const GetAttributeModel();
+    }
+
+    return GetAttributeModel(
+      id: _parseInt(json['id']),
+      attributeId: _parseInt(json['attribute_id']),
+      name: _parseString(json['name']),
+      adminLabel: _parseString(json['admin_label']),
+      slug: _parseString(json['slug']),
+      inputType: _parseString(json['input_type']),
+      isActive: _parseBool(json['is_active']),
+      isOwn: _parseBool(json['is_own']),
+      values: _parseList(json['values'], GetAttributeValueModel.fromJson),
+    );
+  }
+
+  // ============================================================
+  // To JSON
+  // ============================================================
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'attribute_id': attributeId,
+      'name': name,
+      'admin_label': adminLabel,
+      'slug': slug,
+      'input_type': inputType,
+      'is_active': isActive,
+      'is_own': isOwn,
+      'values': values.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+      return value.toLowerCase() == 'true' || value == '1';
+    }
+    if (value is num) return value != 0;
+    return false;
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static String? _parseString(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return value;
+    return value.toString();
+  }
+
+  static List<T> _parseList<T>(
+    dynamic value,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    if (value is! List) return const [];
+    return value
+        .whereType<Map>()
+        .map((item) => fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+}
+
+// ============================================================
+// Get Attribute Value Model
+// ============================================================
+
+class GetAttributeValueModel {
+  const GetAttributeValueModel({
+    this.id,
+    this.value,
+    this.code,
+    this.sortOrder,
+    this.isActive = false,
+  });
+
+  /// DB primary key (attribute_value_id).
+  final int? id;
+
+  final String? value;
+  final String? code;
+  final int? sortOrder;
+
+  /// Variant/value active or inactive status.
+  final bool isActive;
+
+  /// The id that should be sent to attribute_values / variant attributes.
+  int? get effectiveValueId => id;
+
+  // ============================================================
+  // From JSON
+  // ============================================================
+
+  factory GetAttributeValueModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const GetAttributeValueModel();
+    }
+
+    return GetAttributeValueModel(
+      // The server may send the value id under either key.
+      id: _parseInt(json['id']) ?? _parseInt(json['attribute_value_id']),
+      value: _parseString(json['value']),
+      code: _parseString(json['code']),
+      sortOrder: _parseInt(json['sort_order']),
+      isActive: _parseBool(json['is_active']),
+    );
+  }
+
+  // ============================================================
+  // To JSON
+  // ============================================================
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'value': value,
+      'code': code,
+      'sort_order': sortOrder,
+      'is_active': isActive,
+    };
+  }
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+
+  static int? _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+      return value.toLowerCase() == 'true' || value == '1';
+    }
+    if (value is num) return value != 0;
+    return false;
+  }
+
+  static String? _parseString(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return value;
+    return value.toString();
+  }
+}

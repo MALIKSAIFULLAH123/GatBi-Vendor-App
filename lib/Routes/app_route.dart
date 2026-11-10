@@ -1,0 +1,1522 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../Core/Bottom Naigation Bar/bottom_bar_screen.dart';
+import '../Core/Bottom Naigation Bar/bottom_bar_navigation.dart';
+import '../Features/Account Setting/Bank Info/Screens/bank_info_screen.dart';
+import '../Features/Account Setting/Business Change/Screens/business_changes_screen.dart';
+import '../Features/Account Setting/Business Info/Screens/business_info_screen.dart';
+import '../Features/Account Setting/Edit Profile/Screens/edit_profile_screen.dart';
+import '../Features/Account Setting/Get Profile/Screens/vendor_profile_screen.dart';
+import '../Features/Attributes/Add Attributes/Screens/add_attribute_screen.dart';
+import '../Features/Attributes/Edit Attributes/Screens/edit_attribute_screen.dart';
+import '../Features/Attributes/Get Attributes/Models/get_attributes_model.dart';
+import '../Features/Attributes/Get Attributes/Screens/get_attributes_screen.dart';
+import '../Features/Attributes/Varient/Add Varient/Screens/add_variant_screen.dart';
+import '../Features/Attributes/Varient/Edit Varient/Screens/edit_variant_screen.dart';
+import '../Features/Campaign/Campaign Detail/Screens/campaign_detail_screen.dart';
+import '../Features/Campaign/Create Campaign/Screens/create_campaign_screen.dart';
+import '../Features/Notification/Notification Setting/Screens/notification_setting_screen.dart';
+import '../Features/Notification/Screens/notifications_screen.dart';
+import '../Features/Payouts/Get Payouts/Screens/payout_list_screen.dart';
+import '../Features/Payouts/Payout Detail/Screens/payout_detail_screen.dart';
+import '../Features/Product Section/Add Product/Screens/add_product_screen.dart';
+import '../Features/Authentication/Email Verification OTP/email_otp_verification_screen.dart';
+import '../Features/Authentication/Forget Password/Screens/forget_password_Screen.dart';
+import '../Features/Authentication/Forget Verification OTP/forget_verification_otp.dart';
+import '../Features/Authentication/Login Verification OTP/Screens/login_verification_otp_screen.dart';
+import '../Features/Authentication/Apple Login/Screens/apple_login_screen.dart';
+import '../Features/Authentication/Login/Screens/login_screen.dart';
+import '../Features/Authentication/Registration/Screen/registration_screen.dart';
+import '../Features/Authentication/Rest Password/reset_password_screen.dart';
+import '../Features/Bulk Imort/Screens/bulk_import_screen.dart';
+import '../Features/Campaign/Screens/campaigns_screen.dart';
+import '../Features/Change Password/Screens/change_password_screen.dart';
+import '../Features/Chat/Screens/chat_detail_screen.dart';
+import '../Features/Chat/Screens/chat_list_screen.dart';
+import '../Features/Dashboard/dashboard_screen.dart';
+import '../Features/KYC/Screens/kyc_screen.dart';
+import '../Features/More/more_screen.dart';
+import '../Features/Product Section/Edit Product/edit_product_screen.dart';
+import '../Features/Product Section/My Product/Models/my_product_model.dart';
+import '../Features/Product Section/My Product/my_products_screen.dart';
+import '../Features/Onboarding/onboarding_screen.dart';
+import '../Features/Order/Order Detail/screens/order_detail_screen.dart';
+import '../Features/Order/Order List/screens/orders_screen.dart';
+import '../Features/Product Section/Product Detail/Screens/product_detail_screen.dart';
+import '../Features/Question & Answer/Screens/question_list_screen.dart';
+import '../Features/Review/Screens/review_list_screen.dart';
+import '../Features/Sale Event/Edit Event/Screens/edit_event_screen.dart';
+import '../Features/Sale Event/Event Detail/Screens/event_detail_screen.dart';
+import '../Features/Sale Event/Get Event/Screens/events_screen.dart';
+import '../Features/Sale Event/Join Event/Screens/join_event_screen.dart';
+import '../Features/Splash/splash_screen.dart';
+import '../Features/Support/screen/create_support_ticket_screen.dart';
+import '../Features/Support/screen/support_screen.dart';
+import '../Features/Ticket/Create Ticket/Models/create_ticket_model.dart';
+import '../Features/Ticket/Create Ticket/create_ticket_screen.dart';
+import '../Features/Ticket/Detail ticket/ticket_detail_screen.dart';
+import '../Features/Ticket/List Ticket/Models/ticket_list_item_model.dart';
+import '../Features/Ticket/List Ticket/ticket_list_screen.dart';
+import '../Features/analytics/Screens/analytics_screen.dart';
+import 'route_observer.dart';
+
+abstract final class AppRoutes {
+  AppRoutes._();
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ROUTE NAMES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  static const String splash = '/';
+
+  static const String onboarding = '/onboarding';
+
+  static const String login = '/login';
+
+  static const String appleLogin = '/apple-login';
+
+  static const String register = '/register';
+
+  static const String emailotpVerification = '/email-otp-verification';
+
+  static const String loginotpVerification = '/login-otp-verification';
+
+  static const String forgotPassword = '/forgot-password';
+
+  static const String forgetotpVerification = '/forget-otp-verification';
+
+  static const String resetPassword = '/reset-password';
+
+  static const String changePassword = '/change-password';
+
+  static const String bankInfo = '/bank-info';
+
+  static const String businessInfo = '/business-info';
+
+  static const String businessChange = '/business-change';
+
+  static const String bottombar = '/bottombar';
+
+  static const String dashboard = '/dashboard';
+
+  static const String products = '/products';
+
+  static const String orders = '/orders';
+
+  static const String orderDetail = '/orders/detail';
+
+  static const String profile = '/profile';
+
+  static const String editProfile = '/profile/edit';
+
+  static const String attributes = '/attributes';
+
+  static const String addAttributes = '/add/attributes';
+
+  static const String editAttributes = '/edit/attributes';
+
+  static const String chatList = '/chat-list';
+
+  static const String chatDetail = '/chat-detail';
+
+  static const String editProduct = '/products/edit';
+
+  static const String addProduct = '/products/create';
+
+  static const String productDetail = '/products/detail';
+
+  static const String bulkImport = '/products/bulk-import';
+
+  static const String supportTickets = '/support-tickets';
+
+  static const String ticketDetail = '/support-tickets/detail';
+
+  static const String createTicket = '/support-tickets/create';
+
+  static const String reviews = '/reviews';
+
+  static const String questions = '/questions';
+
+  static const String payouts = '/payouts';
+
+  static const String payoutDetail = '/payouts/detail';
+
+  static const String support = '/support';
+
+  static const String createSupportTicket = '/support/create';
+
+  static const String campaigns = '/campaigns';
+
+  static const String createCampaigns = '/create/campaigns';
+
+  static const String campaignDetail = '/campaigns/detail';
+
+  static const String saleEvent = '/sale-event';
+
+  static const String eventDetail = '/sale-event/detail';
+
+  static const String joinEvent = '/sale-event/join';
+
+  static const String editEvent = '/sale-event/edit';
+
+  static const String analytics = '/analytics';
+
+  static const String kyc = '/kyc';
+
+  static const String more = '/more';
+
+  static const String addVariant = '/add/variant';
+
+  static const String editVariant = '/edit/variant';
+
+  static const String notifications = '/notifications';
+
+  static const String notificationSettings = '/notification-settings';
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// APP ROUTER
+// ══════════════════════
+
+final GoRouter appRouter = GoRouter(
+  initialLocation: AppRoutes.splash,
+
+  debugLogDiagnostics: true,
+  observers: [routeObserver],
+
+  routes: [
+    // ═══════════════════════════════════════════════════════════════════════
+    // SPLASH
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.splash,
+      name: 'splash',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SplashScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ONBOARDING
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.onboarding,
+      name: 'onboarding',
+      builder: (BuildContext context, GoRouterState state) {
+        return const OnboardingScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // LOGIN
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.login,
+      name: 'login',
+      builder: (BuildContext context, GoRouterState state) {
+        return LoginScreen(
+          onRegister: () {
+            context.push(AppRoutes.register);
+          },
+
+          onForgotPassword: () {
+            context.push(AppRoutes.forgotPassword);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // APPLE LOGIN
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.appleLogin,
+      name: 'apple-login',
+      builder: (BuildContext context, GoRouterState state) {
+        return AppleLoginScreen(
+          onLoginSuccess: () {
+            context.go(AppRoutes.bottombar);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // REGISTER
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.register,
+      name: 'register',
+      builder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra;
+
+        final data = extra is Map
+            ? Map<String, dynamic>.from(extra)
+            : <String, dynamic>{};
+
+        return RegisterScreen(
+          initialEmail: data['email'] as String?,
+          initialFirstName: data['first_name'] as String?,
+          initialLastName: data['last_name'] as String?,
+          onBackToLogin: () {
+            context.go(AppRoutes.login);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // EMAIL VERIFICATION REGISTER
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.emailotpVerification,
+      name: 'emailotpVerification',
+      builder: (BuildContext context, GoRouterState state) {
+        final email = state.extra as String;
+
+        return EmailOtpVerificationScreen(
+          email: email,
+
+          onVerifyOtp: (otp) async {
+            debugPrint('OTP: $otp');
+            debugPrint('EMAIL: $email');
+
+            // API verification here
+          },
+
+          onResendOtp: () async {
+            debugPrint('Resend OTP for: $email');
+
+            // Resend OTP API here
+          },
+
+          onBack: () {
+            context.pop();
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // LOGIN VERIFICATION
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.loginotpVerification,
+      name: 'loginotpVerification',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        final data = extra is Map
+            ? Map<String, dynamic>.from(extra)
+            : <String, dynamic>{};
+
+        final email = data['email'] as String? ?? '';
+
+        final merchantId = data['merchant_id'] is int
+            ? data['merchant_id'] as int
+            : int.tryParse(data['merchant_id']?.toString() ?? '') ?? 0;
+
+        final expiresInMinutes = data['expires_in_minutes'] is int
+            ? data['expires_in_minutes'] as int
+            : int.tryParse(data['expires_in_minutes']?.toString() ?? '') ?? 0;
+
+        return LoginOtpVerificationScreen(
+          email: email,
+          merchantId: merchantId,
+          expiresInMinutes: expiresInMinutes,
+
+          // IMPORTANT:
+          // OTP screen ko Login par wapas bhejna hai.
+          // context.pop() USE NAHI karna.
+          onBack: () {
+            context.go(AppRoutes.login);
+          },
+        );
+      },
+    ),
+    // ═══════════════════════════════════════════════════════════════════════
+    // FORGET PASSWORD
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      name: 'forgot-password',
+      builder: (BuildContext context, GoRouterState state) {
+        return ForgotPasswordScreen(
+          onBackToLogin: () {
+            context.go(AppRoutes.login);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // FORGET VERIFICATION
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.forgetotpVerification,
+      name: 'forgetotpVerification',
+      builder: (BuildContext context, GoRouterState state) {
+        final email = state.extra as String;
+
+        return ForgetOtpVerificationScreen(
+          email: email,
+
+          onVerifyOtp: (otp) async {
+            debugPrint('OTP: $otp');
+            debugPrint('EMAIL: $email');
+
+            // API verification here
+          },
+
+          onResendOtp: () async {
+            debugPrint('Resend OTP for: $email');
+
+            // Resend OTP API here
+          },
+
+          onBack: () {
+            context.pop();
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // REST PASSWORD
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.resetPassword,
+      name: 'reset-password',
+      builder: (BuildContext context, GoRouterState state) {
+        final token = state.uri.queryParameters['token'] ?? '';
+
+        return ResetPasswordScreen(
+          token: token,
+          onBackToLogin: () {
+            context.go(AppRoutes.login);
+          },
+          onResetPassword: (token, password, passwordConfirmation) async {
+            // API call yahan later connect karenge.
+            debugPrint('Reset Token: $token');
+            debugPrint('Password: $password');
+            debugPrint('Password Confirmation: $passwordConfirmation');
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Notifications
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.notifications,
+      name: 'notifications',
+      builder: (context, state) {
+        return const NotificationsScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.notificationSettings,
+      name: 'notification-settings',
+      builder: (context, state) {
+        return const NotificationSettingScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BOTTOM BAR
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.bottombar,
+      name: 'bottombar',
+      builder: (context, state) {
+        final initialTab = state.extra is BottomTab
+            ? state.extra as BottomTab
+            : BottomTab.dashboard;
+
+        return BottomMainScreen(initialTab: initialTab);
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Bank Info
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.bankInfo,
+      name: 'bank-info',
+      builder: (context, state) {
+        return const BankInfoScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // BUSINESS INFO
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.businessInfo,
+      name: 'business-info',
+      builder: (context, state) {
+        return const BusinessInfoScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // BUSINESS CHANGE
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.businessChange,
+      name: 'business-change',
+      builder: (context, state) {
+        return const BusinessChangeScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CHANGE PASSWORD
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.changePassword,
+      name: 'change-password',
+      builder: (context, state) {
+        return ChangePasswordScreen(
+          onBack: () {
+            context.pop();
+          },
+
+          onPasswordChanged: () {
+            // API / Riverpod will be connected later.
+            debugPrint('Password changed successfully');
+          },
+        );
+      },
+    ),
+
+    // Dashboard
+    GoRoute(
+      path: AppRoutes.dashboard,
+      name: 'dashboard',
+      builder: (context, state) {
+        return const DashboardScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.attributes,
+      name: 'attributes',
+      builder: (context, state) {
+        return GetAttributesScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.addAttributes,
+      name: 'add-attributes',
+      builder: (context, state) {
+        return AddAttributeScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.editAttributes,
+      name: 'edit-attributes',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE ROUTE DATA
+        // ============================================================
+
+        if (extra is! Map) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        final data = Map<String, dynamic>.from(extra);
+
+        final attributeId = data['attributeId'];
+        final initialName = data['initialName'];
+        final initialInputType = data['initialInputType'];
+        final initialIsActive = data['initialIsActive'];
+        final initialSlug = data['initialSlug'];
+
+        // ============================================================
+        // VALIDATE ATTRIBUTE ID
+        // ============================================================
+
+        if (attributeId is! int || attributeId <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // EDIT ATTRIBUTE SCREEN
+        // ============================================================
+
+        return EditAttributeScreen(
+          attributeId: attributeId,
+          initialName: initialName is String ? initialName : '',
+          initialInputType: initialInputType is String
+              ? initialInputType
+              : 'text',
+          initialIsActive: initialIsActive is bool ? initialIsActive : false,
+          initialSlug: initialSlug is String ? initialSlug : null,
+        );
+      },
+    ),
+
+    // Products
+    GoRoute(
+      path: AppRoutes.products,
+      name: 'products',
+      builder: (context, state) {
+        return const MyProductScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.addProduct,
+      name: 'add-product',
+      builder: (context, state) {
+        return const AddProductScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.editProduct,
+      name: 'edit-product',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        if (extra is! MyProductModel) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Product data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        return EditProductScreen(product: extra);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.productDetail,
+      name: 'product-detail',
+      builder: (context, state) {
+        final productId = state.extra as int;
+
+        return ProductDetailScreen(productId: productId);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.bulkImport,
+      name: 'bulk-import',
+      builder: (context, state) {
+        return const BulkImportScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SUPPORT TICKETS
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.supportTickets,
+      name: 'support-tickets',
+      builder: (context, state) {
+        return TicketListScreen(
+          onCreateTicket: () {
+            context.push(AppRoutes.createTicket);
+          },
+
+          onTicketTap: (ticket) {
+            context.push(AppRoutes.ticketDetail, extra: ticket);
+          },
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.ticketDetail,
+      name: 'ticket-detail',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE TICKET DATA
+        // ============================================================
+
+        if (extra is! TicketListItemModel) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Ticket data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE TICKET ID
+        // ============================================================
+
+        final ticketId = extra.id;
+
+        if (ticketId == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Ticket ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // TICKET DETAIL SCREEN
+        // ============================================================
+
+        return TicketDetailScreen(
+          ticketId: ticketId,
+          ticketNumber: extra.ticketNumber,
+
+          // ----------------------------------------------------------
+          // BACK
+          // ----------------------------------------------------------
+          onBack: () {
+            context.pop();
+          },
+
+          // ----------------------------------------------------------
+          // CREATE TICKET
+          // ----------------------------------------------------------
+          onCreateTicket: () {
+            context.push(AppRoutes.createTicket);
+          },
+
+          // ----------------------------------------------------------
+          // SEND REPLY
+          // ----------------------------------------------------------
+          //
+          // API is already connected inside TicketDetailScreen.
+          // No separate API call is required here.
+          //
+          // ----------------------------------------------------------
+          onSendReply: (message) {
+            debugPrint('');
+            debugPrint('========== TICKET REPLY ==========');
+            debugPrint('TICKET ID: $ticketId');
+            debugPrint('TICKET NUMBER: ${extra.ticketNumber ?? 'N/A'}');
+            debugPrint('REPLY: $message');
+            debugPrint('==================================');
+            debugPrint('');
+          },
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.createTicket,
+      name: 'create-ticket',
+      builder: (context, state) {
+        return CreateTicketScreen(
+          onBack: () {
+            context.pop();
+          },
+
+          onSubmit: (CreateTicketModel result) {
+            final ticket = result.ticket;
+
+            debugPrint('');
+            debugPrint('========== CREATE TICKET ==========');
+            debugPrint('SUCCESS: ${result.success}');
+            debugPrint('MESSAGE: ${result.message ?? 'N/A'}');
+            debugPrint('');
+            debugPrint('---------- TICKET ----------');
+            debugPrint('ID: ${ticket?.id ?? 'N/A'}');
+            debugPrint('Ticket Number: ${ticket?.ticketNumber ?? 'N/A'}');
+            debugPrint('Subject: ${ticket?.subject ?? 'N/A'}');
+            debugPrint('Category: ${ticket?.category ?? 'N/A'}');
+            debugPrint('Priority: ${ticket?.priority ?? 'N/A'}');
+            debugPrint('Status: ${ticket?.status ?? 'N/A'}');
+            debugPrint('Created At: ${ticket?.createdAt ?? 'N/A'}');
+            debugPrint('===================================');
+            debugPrint('');
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.campaigns,
+      name: 'campaigns',
+      builder: (context, state) {
+        return const CampaignsScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.createCampaigns,
+      name: 'create-campaigns',
+      builder: (context, state) {
+        return const CreateCampaignScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.campaignDetail,
+      name: 'campaign-detail',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE CAMPAIGN ID
+        // ============================================================
+
+        if (extra is! int || extra <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Campaign ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // CAMPAIGN DETAIL SCREEN
+        // ============================================================
+
+        return CampaignDetailScreen(
+          campaignId: extra,
+          onBack: () {
+            context.pop();
+          },
+          onRefresh: () {
+            debugPrint('Refreshing Campaign ID: $extra');
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.saleEvent,
+      name: 'sale-event',
+      builder: (context, state) {
+        return const EventsScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // EVENT DETAIL
+    // ═══════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.eventDetail,
+      name: 'event-detail',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE EVENT ID
+        // ============================================================
+
+        if (extra is! int || extra <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Event ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // EVENT DETAIL SCREEN
+        // ============================================================
+
+        return EventDetailScreen(eventId: extra);
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // JOIN EVENT
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.joinEvent,
+      name: 'join-event',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        int eventId;
+        String eventName;
+        String startDate;
+        String endDate;
+
+        // ============================================================
+        // MAP DATA
+        // ============================================================
+
+        if (extra is Map) {
+          final map = Map<String, dynamic>.from(extra);
+
+          final rawEventId = map['eventId'];
+          final rawEventName = map['eventName'];
+          final rawStartDate = map['startDate'];
+          final rawEndDate = map['endDate'];
+
+          eventId = rawEventId is int ? rawEventId : 0;
+
+          eventName = rawEventName is String && rawEventName.trim().isNotEmpty
+              ? rawEventName
+              : 'Event';
+
+          startDate = rawStartDate is String ? rawStartDate : '';
+
+          endDate = rawEndDate is String ? rawEndDate : '';
+        }
+        // ============================================================
+        // BACKWARD COMPATIBILITY
+        // ============================================================
+        else if (extra is int && extra > 0) {
+          eventId = extra;
+          eventName = 'Event';
+          startDate = '';
+          endDate = '';
+        }
+        // ============================================================
+        // INVALID DATA
+        // ============================================================
+        else {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Event ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE EVENT ID
+        // ============================================================
+
+        if (eventId <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Event ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // JOIN EVENT SCREEN
+        // ============================================================
+
+        return JoinEventScreen(
+          eventId: eventId,
+          eventName: eventName,
+          startDate: startDate,
+          endDate: endDate,
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // EDIT EVENT
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.editEvent,
+      name: 'edit-event',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE EVENT ID
+        // ============================================================
+
+        if (extra is! int || extra <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Event ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // EDIT EVENT SCREEN
+        // ============================================================
+
+        return EditEventScreen(eventId: extra);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.addVariant,
+      name: 'add-variant',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE ATTRIBUTE DATA
+        // ============================================================
+
+        if (extra is! GetAttributeModel) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE ATTRIBUTE ID
+        // ============================================================
+
+        final attributeId = extra.id;
+
+        if (attributeId == null || attributeId <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE OWN ATTRIBUTE
+        // ============================================================
+
+        if (!extra.isOwn) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'System attributes cannot be modified.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // ADD VARIANT SCREEN
+        // ============================================================
+
+        return AddVariantScreen(attribute: extra);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.editVariant,
+      name: 'edit-variant',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE ROUTE DATA
+        // ============================================================
+
+        if (extra is! Map) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Variant data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        final data = Map<String, dynamic>.from(extra);
+
+        final attribute = data['attribute'];
+        final variant = data['variant'];
+
+        // ============================================================
+        // VALIDATE ATTRIBUTE
+        // ============================================================
+
+        if (attribute is! GetAttributeModel) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE VARIANT
+        // ============================================================
+
+        if (variant is! GetAttributeValueModel) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Variant data is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE ATTRIBUTE ID
+        // ============================================================
+
+        final attributeId = attribute.id;
+
+        if (attributeId == null || attributeId <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Attribute ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE VARIANT ID
+        // ============================================================
+
+        final variantId = variant.id;
+
+        if (variantId == null || variantId <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Variant ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // VALIDATE OWN ATTRIBUTE
+        // ============================================================
+
+        if (!attribute.isOwn) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'System attributes cannot be modified.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // EDIT VARIANT SCREEN
+        // ============================================================
+
+        return EditVariantScreen(attribute: attribute, variant: variant);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.chatList,
+      name: 'chat-list',
+      builder: (context, state) {
+        return const ChatListScreen();
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.chatDetail,
+      name: 'chat-detail',
+      builder: (context, state) {
+        return ChatDetailScreen(
+          chatId: int.parse(state.pathParameters['chatId']!),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.analytics,
+      name: 'analytics',
+      builder: (context, state) {
+        return AnalyticsScreen(
+          onProductsTap: () {
+            context.push(AppRoutes.bottombar, extra: BottomTab.products);
+          },
+          onOrdersTap: () {
+            context.push(AppRoutes.orders);
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.kyc,
+      name: 'kyc',
+      builder: (context, state) {
+        return const KycScreen();
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SUPPORT
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.support,
+      name: 'support',
+      builder: (context, state) {
+        return SupportScreen(
+          onBack: () {
+            context.pop();
+          },
+
+          onCustomerChatTap: () {
+            context.push(AppRoutes.bottombar, extra: BottomTab.chat);
+          },
+
+          onCampaignsTap: () {
+            context.push(AppRoutes.campaigns);
+          },
+
+          onOrdersTap: () {
+            context.push(AppRoutes.orders);
+          },
+
+          onCampaignRequestTap: () {
+            context.push(AppRoutes.campaigns);
+          },
+
+          onAnalyticsTap: () {
+            context.push(AppRoutes.analytics);
+          },
+
+          onProductsTap: () {
+            context.push(AppRoutes.bottombar, extra: BottomTab.products);
+          },
+
+          onCreateTicketTap: () {
+            context.push(AppRoutes.createSupportTicket);
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.createSupportTicket,
+      name: 'create-support-ticket',
+      builder: (context, state) {
+        return CreateSupportTicketScreen(
+          onBack: () {
+            context.pop();
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // QUESTIONS & ANSWERS
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.questions,
+      name: 'questions',
+      builder: (context, state) {
+        return QuestionListScreen();
+      },
+    ),
+    // ═══════════════════════════════════════════════════════════════════════════
+    // PAYOUTS
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.payouts,
+      name: 'payouts',
+      builder: (context, state) {
+        return PayoutListScreen(
+          onBack: () {
+            context.pop();
+          },
+
+          onDetail: (payout) async {
+            final payoutId = payout.id;
+
+            if (payoutId == null || payoutId <= 0) {
+              debugPrint('Payout ID is missing.');
+              return;
+            }
+
+            await context.push(AppRoutes.payoutDetail, extra: payoutId);
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.payoutDetail,
+      name: 'payout-detail',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        // ============================================================
+        // VALIDATE PAYOUT ID
+        // ============================================================
+
+        if (extra is! int || extra <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Payout ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        // ============================================================
+        // PAYOUT DETAIL SCREEN
+        // ============================================================
+
+        return PayoutDetailScreen(payoutId: extra);
+      },
+    ),
+    // ═══════════════════════════════════════════════════════════════════════════
+    // REVIEWS
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.reviews,
+      name: 'reviews',
+      builder: (context, state) {
+        return ReviewListScreen(
+          onBack: () {
+            context.pop();
+          },
+        );
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.more,
+      name: 'more',
+      builder: (context, state) {
+        return MoreScreen(
+          onOrders: () {
+            context.push(AppRoutes.orders);
+          },
+
+          onBulkProducts: () {
+            context.push(AppRoutes.bulkImport);
+          },
+
+          onTickets: () {
+            context.push(AppRoutes.supportTickets);
+          },
+
+          onCampaigns: () {
+            context.push(AppRoutes.campaigns);
+          },
+
+          onAnalytics: () {
+            context.push(AppRoutes.analytics);
+          },
+
+          onSupport: () {
+            context.push(AppRoutes.support);
+          },
+
+          onChangePassword: () {
+            context.push(AppRoutes.changePassword);
+          },
+
+          onReviews: () {
+            context.push(AppRoutes.reviews);
+          },
+          onQuestionsAndAnswers: () {
+            context.push(AppRoutes.questions);
+          },
+          onPayouts: () {
+            context.push(AppRoutes.payouts);
+          },
+          onSaleEvent: () {
+            context.push(AppRoutes.saleEvent);
+          },
+          onKycVerification: () {
+            context.push(AppRoutes.kyc);
+          },
+          onAttributes: () {
+            context.push(AppRoutes.attributes);
+          },
+          onProfile: () {
+            context.push(AppRoutes.profile);
+          },
+          onBankDetails: () {
+            context.push(AppRoutes.bankInfo);
+          },
+          onBusiness: () {
+            context.push(AppRoutes.businessInfo);
+          },
+
+          onNotifications: () {
+            context.push(AppRoutes.notifications);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ORDERS
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.orders,
+      name: 'orders',
+      builder: (context, state) {
+        return OrdersScreen(
+          onOrderTap: (order) {
+            final orderId = order.id;
+            if (orderId == null || orderId <= 0) {
+              return;
+            }
+
+            context.push(AppRoutes.orderDetail, extra: orderId);
+          },
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.orderDetail,
+      name: 'order-detail',
+      builder: (context, state) {
+        final extra = state.extra;
+
+        if (extra is! int || extra <= 0) {
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'Order ID is missing.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          );
+        }
+
+        return OrderDetailScreen(
+          orderId: extra,
+          onBack: () {
+            context.pop();
+          },
+          onRefresh: () {
+            debugPrint('Refreshing Order ID: $extra');
+          },
+        );
+      },
+    ),
+    // ═══════════════════════════════════════════════════════════════════════════
+    // VENDOR PROFILE
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.profile,
+      name: 'profile',
+      builder: (context, state) {
+        return VendorProfileScreen(
+          onEdit: () async {
+            debugPrint('');
+            debugPrint('========== VENDOR PROFILE EDIT ==========');
+            debugPrint('Opening merchant profile edit screen...');
+            debugPrint('=========================================');
+            debugPrint('');
+
+            await context.push(AppRoutes.editProfile);
+          },
+        );
+      },
+    ),
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // EDIT VENDOR PROFILE
+    // ═══════════════════════════════════════════════════════════════════════════
+    GoRoute(
+      path: AppRoutes.editProfile,
+      name: 'edit-profile',
+      builder: (context, state) {
+        return const EditProfileScreen();
+      },
+    ),
+  ],
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // ERROR PAGE
+  // ═════════════════════════════════════════════════════════════════════════
+  errorBuilder: (BuildContext context, GoRouterState state) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 64,
+                color: Colors.red,
+              ),
+
+              const SizedBox(height: 16),
+
+              const Text(
+                'Page Not Found',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                state.uri.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey),
+              ),
+
+              const SizedBox(height: 24),
+
+              ElevatedButton(
+                onPressed: () {
+                  context.go(AppRoutes.splash);
+                },
+                child: const Text('Go to Splash'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  },
+);

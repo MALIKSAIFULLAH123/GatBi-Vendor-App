@@ -1,0 +1,224 @@
+class ApiUrls {
+  ApiUrls._();
+
+  static const String baseUrl = 'https://gatbi.ae/api/mobile/';
+
+  /// Public files / uploaded documents
+  static const String fileBaseUrl = 'https://gatbi.ae';
+
+  // Auth
+  static const String register = 'vendor/auth/register';
+  static const String verifyOtp = 'vendor/auth/verify-otp';
+  static const String login = 'vendor/auth/login';
+  static const String forgotPassword = 'vendor/auth/forgot-password';
+  static const String resetPassword = 'vendor/auth/reset-password';
+  static const String resendOtp = 'vendor/auth/resend-otp';
+  static const String logout = 'vendor/auth/logout';
+  // Social Login
+  static const String socialProviders = 'auth/social/providers';
+  static const String appleLogin = 'vendor/auth/social/apple';
+
+  static String socialLogin(String provider) {
+    return 'vendor/auth/social/$provider';
+  }
+
+  //Using registration
+  static const String businesstype = 'vendor/business-types';
+  static const String catagery = 'categories';
+  static const String phoneRules = 'vendor/phone-rules';
+  static const String countries = 'countries';
+
+  // Vendor
+  static const String me = 'vendor/me';
+
+  //edit Profile
+  static const String editProfile = 'vendor/settings/profile';
+
+  // Bank Info
+  static const String vendorBankInfo = 'vendor/settings/bank';
+
+  // Business Change
+  static const String businessChange = 'vendor/settings/business-change';
+
+  static String cancelBusinessChange(int requestId) {
+    return '$businessChange/$requestId/cancel';
+  }
+
+  // Notifications
+  static const String getNotifications = 'vendor/notifications';
+
+  static const String markReadNotification = 'vendor/notifications/mark-read';
+
+  static const String markAllReadNotifications =
+      'vendor/notifications/mark-all-read';
+
+  static const String deleteNotification = 'vendor/notifications/delete';
+
+  static const String notificationSettings = 'vendor/settings/preferences';
+
+  // Device Registration
+  static const String registerDevice = 'vendor/devices/register';
+
+  // Device Unregistration
+  static const String unregisterDevice = 'vendor/devices/unregister';
+
+  // Get Devices
+  static const String getDevices = 'vendor/devices';
+
+  // Dashboard
+  static const String dashboard = 'vendor/dashboard';
+
+  // Categery
+  static const String categoryOptions = 'vendor/registration-options';
+
+  // analytics
+  static const String analytics = 'vendor/analytics';
+
+  // campaigns
+  static const String campaigns = 'vendor/campaigns';
+
+  static const String createCampaign = 'vendor/campaigns';
+
+  static const String campaignDetail = 'vendor/campaigns';
+
+  static const String campaignTypes = 'vendor/campaign-types';
+
+  //Sale Event
+  static const String getEvents = 'vendor/events';
+
+  static String updateEvent(int eventId) {
+    return '$getEvents/$eventId/update';
+  }
+
+  static String cancelParticipation(int eventId) {
+    return '$getEvents/$eventId/withdraw';
+  }
+
+  // Products
+  static const String products = 'vendor/products';
+
+  static String product(int id) => 'vendor/products/$id';
+
+  static String updateProduct(int id) => 'vendor/products/$id/update';
+
+  static String deleteProduct(int id) => 'vendor/products/$id/delete';
+
+  static String updateStock(int id) => 'vendor/products/$id/stock';
+
+  static const String bulkProduct = 'vendor/products/bulk';
+
+  static const String productOptions = 'vendor/product-options';
+
+  static const String exportProductsCsv = 'vendor/products/export/csv';
+
+  static const String translateProduct = 'vendor/products/translate';
+
+  static String translateExistingProduct(int id) =>
+      'vendor/products/$id/translate';
+
+  // Attributes / Variants
+  static const String attributes = 'vendor/attributes';
+
+  static String productVariants(int productId) =>
+      'vendor/products/$productId/variants';
+
+  static String createVariant(int productId) =>
+      'vendor/products/$productId/variants';
+
+  static String updateVariant(int productId, int variantId) =>
+      'vendor/products/$productId/variants/$variantId/update';
+
+  static String deleteVariant(int productId, int variantId) =>
+      'vendor/products/$productId/variants/$variantId/delete';
+
+  // Bulk Import
+  static const String downloadSampleCsv = 'vendor/products/import/sample-csv';
+
+  static const String downloadSampleXlsx =
+      'vendor/products/import/template-xlsx';
+
+  static const String importProducts = 'vendor/products/import';
+
+  static const String startProductImports = 'vendor/products/import/start';
+
+  static const String processProductImport = 'vendor/products/import/process';
+
+  // Orders
+  static const String orders = 'vendor/orders';
+
+  static String order(int id) => 'vendor/orders/$id';
+
+  static String updateOrderStatus(int id) => 'vendor/orders/$id/status';
+
+  static String verifyPaymentProof(int id) =>
+      'vendor/orders/$id/payment-proof/verify';
+
+  static String rejectPaymentProof(int id) =>
+      'vendor/orders/$id/payment-proof/reject';
+
+  // KYC
+  static const String kyc = 'vendor/kyc';
+
+  static const String kycSubmit = 'vendor/kyc/submit';
+
+  // Chat
+  static const String venderChats = 'vendor/chats';
+
+  static String chat(int id) => 'vendor/chat/$id';
+
+  static String sendChatMessage(int id) => 'vendor/chat/$id/message';
+
+  // Tickets
+  static const String tickets = 'vendor/tickets';
+
+  static String ticket(int id) => 'vendor/tickets/$id';
+
+  static String replyTicket(int id) => 'vendor/tickets/$id/reply';
+
+  // Reviews
+  static const String reviews = 'vendor/reviews';
+
+  static const String reviewsSummary = 'vendor/reviews/summary';
+
+  static String reviewReply(int id) => 'vendor/reviews/$id/reply';
+
+  //Question & Answer
+  static const String question = 'vendor/questions';
+
+  static String answer(int questionId) => 'vendor/questions/$questionId/answer';
+
+  //Support
+  static const String createSupport = 'vendor/support';
+
+  // Payouts
+  static const String payouts = 'vendor/payouts';
+
+  static const String eligiblePayout = 'vendor/payouts/eligible';
+
+  static String payout(int id) => 'vendor/payouts/$id';
+
+  static const String requestPayout = 'vendor/payouts/request';
+
+  // Settings
+  static const String settings = 'settings';
+
+  static const String getProfile = 'vendor/settings';
+
+  static const String updateProfile = 'vendor/settings/profile';
+
+  static const String updateBusiness = 'vendor/settings/business';
+
+  static const String updateBank = 'vendor/settings/bank';
+
+  static const String changePassword = 'vendor/settings/password';
+
+  static const String preferences = 'vendor/settings/preferences';
+
+  // ============================================================
+  // Vendor Attributes
+  // ============================================================
+
+  static const String vendorAttributes = '/vendor/attributes';
+
+  static const String vendorAttributeValues = '/vendor/attribute-values';
+}
