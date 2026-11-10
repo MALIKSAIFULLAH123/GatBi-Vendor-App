@@ -14,9 +14,6 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.gatbi.gatbivender
 
-      integrations:
-        app_store_connect: GatBi App Store Connect
-
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
