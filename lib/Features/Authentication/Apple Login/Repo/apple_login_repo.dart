@@ -17,7 +17,7 @@ const String _defaultAppleServiceId = String.fromEnvironment(
 );
 const String _appleRedirectUri = String.fromEnvironment(
   'APPLE_REDIRECT_URI',
-  defaultValue: 'https://gatbi.ae/auth/apple/callback',
+  defaultValue: 'https://gatbi.ae/auth/apple/callback/vendor',
 );
 const String _androidStatePrefix = 'vendor_';
 

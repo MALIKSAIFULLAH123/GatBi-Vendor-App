@@ -72,6 +72,7 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/Vender.png"
   min_sdk_android: 21
+  remove_alpha_ios: true
   # Agar adaptive icon chahiye toh neeche wali lines uncomment kar dein:
   # adaptive_icon_background: "#ffffff"
   # adaptive_icon_foreground: "assets/Vender.png"
