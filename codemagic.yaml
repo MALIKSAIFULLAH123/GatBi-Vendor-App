@@ -1,0 +1,33 @@
+
+workflows:
+  gatbi-vendor-ios:
+    name: GatBi Vendor iOS Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.gatbi.gatbivender
+
+      integrations:
+        app_store_connect: GatBi App Store Connect
+
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Set up iOS code signing
+        script: xcode-project use-profiles
+
+      - name: Build iOS IPA
+        script: flutter build ipa --release
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
