@@ -1,4 +1,3 @@
-
 workflows:
   gatbi-vendor-ios:
     name: GatBi Vendor iOS Build
@@ -18,6 +17,13 @@ workflows:
         bundle_identifier: com.gatbi.gatbivender
 
     scripts:
+      - name: Clean iOS Pods
+        script: |
+          cd ios
+          rm -rf Pods Podfile.lock .symlinks
+          cd ..
+          flutter clean
+
       - name: Get Flutter packages
         script: |
           flutter pub get
