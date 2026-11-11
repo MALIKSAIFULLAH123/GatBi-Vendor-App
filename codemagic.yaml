@@ -51,8 +51,4 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-<<<<<<< HEAD
       - flutter_drive.log
-=======
-      - flutter_drive.log
->>>>>>> 215321533fa99d41f01fe2f84caabaaaa20ea7fd
