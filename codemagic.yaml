@@ -43,7 +43,21 @@ workflows:
       - name: Set up iOS code signing
         script: |
           xcode-project use-profiles
-
+      - name: Fix Pods Path in pbxproj
+        script: |
+          cd ios
+          # Agar PODS_ROOT pehle se hai toh usay update karein, warna add karein
+          if grep -q "PODS_ROOT" Runner.xcodeproj/project.pbxproj; then
+            sed -i '' 's|PODS_ROOT = .*|PODS_ROOT = "${SRCROOT}/Pods";|g' Runner.xcodeproj/project.pbxproj
+          else
+            sed -i '' 's|buildSettings = {|buildSettings = {\n\t\t\t\tPODS_ROOT = "${SRCROOT}/Pods";|g' Runner.xcodeproj/project.pbxproj
+          fi
+          if grep -q "PODS_PODFILE_DIR_PATH" Runner.xcodeproj/project.pbxproj; then
+            sed -i '' 's|PODS_PODFILE_DIR_PATH = .*|PODS_PODFILE_DIR_PATH = "${SRCROOT}/.";|g' Runner.xcodeproj/project.pbxproj
+          else
+            sed -i '' 's|buildSettings = {|buildSettings = {\n\t\t\t\tPODS_PODFILE_DIR_PATH = "${SRCROOT}/.";|g' Runner.xcodeproj/project.pbxproj
+          fi
+          cd ..
       - name: Build iOS IPA
         script: |
           xcode-project build-ipa \
