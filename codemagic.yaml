@@ -20,7 +20,9 @@ workflows:
       - name: Clean iOS Pods
         script: |
           cd ios
-          rm -rf Pods Podfile.lock .symlinks
+          rm -rf Pods
+          rm -f Podfile.lock
+          rm -rf .symlinks
           cd ..
           flutter clean
 
