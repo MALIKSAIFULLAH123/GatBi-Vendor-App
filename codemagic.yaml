@@ -1,0 +1,54 @@
+workflows:
+  gatbi-vendor-ios:
+    name: GatBi Vendor iOS Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: ios
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.gatbi.gatbivender
+
+    scripts:
+      - name: Clean iOS Pods
+        script: |
+          cd ios
+          rm -rf Pods Podfile.lock .symlinks
+          cd ..
+          flutter clean
+
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Precache iOS dependencies
+        script: |
+          flutter precache --ios
+
+      - name: Install iOS CocoaPods
+        script: |
+          cd ios
+          pod install --repo-update
+          cd ..
+
+      - name: Set up iOS code signing
+        script: |
+          xcode-project use-profiles
+
+      - name: Build iOS IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace ios/Runner.xcworkspace \
+            --scheme Runner
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
