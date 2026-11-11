@@ -6,7 +6,7 @@ workflows:
     instance_type: mac_mini_m2
 
     integrations:
-      app_store_connect: Gatbi App Store Connect
+      app_store_connect: ios
 
     environment:
       flutter: stable
