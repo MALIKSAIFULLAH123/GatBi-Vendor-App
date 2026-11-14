@@ -256,6 +256,18 @@ workflows:
 
           echo "Building signed iOS IPA..."
 
+          echo "===== Generated Plugin Registrant ====="
+          cat ios/Runner/GeneratedPluginRegistrant.m
+
+          echo "===== file_picker Pod Lock ====="
+          grep -in "file_picker" ios/Podfile.lock || true
+
+          echo "===== file_picker Installed Pods ====="
+          find ios/Pods -iname "*file_picker*" -maxdepth 5 2>/dev/null || true
+
+          echo "===== file_picker Symlink ====="
+          ls -la ios/.symlinks/plugins/file_picker_darwin/ios/ 2>/dev/null || true
+
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
             --scheme Runner
