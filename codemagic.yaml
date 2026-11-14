@@ -42,74 +42,31 @@ workflows:
 
           echo "Flutter dependencies installed"
 
-      # STEP 3: Repair stale Flutter plugin metadata
-      - name: Repair Flutter Plugin Metadata
+      # STEP 3: Clean and resolve Flutter iOS plugins (file_picker fix)
+      - name: Clean and resolve Flutter iOS plugins
         script: |
           set -e
 
-          # Remove stale generated plugin metadata
-          rm -rf .dart_tool
-          rm -f .flutter-plugins-dependencies
+          flutter clean
+          rm -rf ios/Pods
+          rm -rf ios/.symlinks
+          rm -f ios/Podfile.lock
           rm -f .flutter-plugins
+          rm -f .flutter-plugins-dependencies
 
-          # Recreate Flutter plugin metadata
           flutter pub get
-
-          echo "Checking file_picker registration..."
-
-          grep -n "file_picker_darwin" \
-            .flutter-plugins-dependencies || true
-
-          echo "Checking iOS plugin symlink..."
-
-          if [ -d "ios/.symlinks/plugins/file_picker_darwin" ]; then
-            echo "file_picker_darwin plugin found"
-          else
-            echo "Plugin symlink will be checked after CocoaPods setup"
-          fi
-
-      # STEP 4: Prepare Flutter iOS environment
-      - name: Prepare iOS Dependencies
-        script: |
-          set -e
-
           flutter precache --ios
 
-          echo "iOS Flutter engine prepared"
-
-      # STEP 5: Install CocoaPods
-      - name: Install iOS CocoaPods
-        script: |
-          set -e
+          echo "Checking file_picker plugin metadata..."
+          grep -n "file_picker_darwin" .flutter-plugins-dependencies
 
           cd ios
+          pod install --repo-update
 
-          echo "Installing CocoaPods dependencies..."
+          echo "Checking installed iOS plugin..."
+          grep -n "file_picker_darwin" Podfile.lock
 
-          # Generate a fresh lockfile if missing.
-          # Existing lockfiles are preserved.
-          pod install --repo-update --verbose
-
-          cd ..
-
-          # Verify Podfile.lock
-          if [ ! -f ios/Podfile.lock ]; then
-            echo "ERROR: Podfile.lock was not generated"
-            exit 1
-          fi
-
-          # Verify CocoaPods Manifest.lock
-          if [ ! -f ios/Pods/Manifest.lock ]; then
-            echo "ERROR: Pods/Manifest.lock is missing"
-            exit 1
-          fi
-
-          # Check synchronization
-          diff ios/Podfile.lock ios/Pods/Manifest.lock
-
-          echo "CocoaPods installation successful"
-
-      # STEP 6: Fix Flutter CocoaPods Configuration
+      # STEP 4: Fix Flutter CocoaPods Configuration
       - name: Configure Flutter iOS XCConfig
         script: |
           set -e
@@ -157,7 +114,7 @@ workflows:
 
           echo "XCConfig configuration completed"
 
-      # STEP 7: Verify CocoaPods Configuration
+      # STEP 5: Verify CocoaPods Configuration
       - name: Verify CocoaPods Configuration
         script: |
           set -e
@@ -182,9 +139,15 @@ workflows:
           grep -q "Pods-Runner.release.xcconfig" \
             ios/Flutter/Release.xcconfig
 
+          echo "Checking file_picker_darwin in Podfile.lock..."
+
+          grep -q "file_picker_darwin" ios/Podfile.lock \
+            && echo "file_picker_darwin OK" \
+            || (echo "ERROR: file_picker_darwin missing from Podfile.lock" && exit 1)
+
           echo "All iOS dependency checks passed"
 
-      # STEP 8: Configure Apple Code Signing
+      # STEP 6: Configure Apple Code Signing
       - name: Set Up iOS Code Signing
         script: |
           set -e
@@ -193,7 +156,7 @@ workflows:
 
           echo "Apple code signing configured"
 
-      # STEP 9: Verify Xcode Workspace
+      # STEP 7: Verify Xcode Workspace
       - name: Verify Xcode Workspace
         script: |
           set -e
@@ -210,7 +173,7 @@ workflows:
             'PODS_ROOT =|PODS_PODFILE_DIR_PATH =' \
             /tmp/gatbi_build_settings.log || true
 
-      # STEP 10: Build Signed iOS IPA
+      # STEP 8: Build Signed iOS IPA
       - name: Build iOS IPA
         script: |
           set -e
