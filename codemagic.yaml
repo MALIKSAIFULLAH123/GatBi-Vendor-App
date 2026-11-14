@@ -256,17 +256,19 @@ workflows:
 
           echo "Building signed iOS IPA..."
 
-          echo "===== Generated Plugin Registrant ====="
-          cat ios/Runner/GeneratedPluginRegistrant.m
+          echo "===== GeneratedPluginRegistrant FIRST 80 LINES ====="
+          head -80 ios/Runner/GeneratedPluginRegistrant.m
 
-          echo "===== file_picker Pod Lock ====="
-          grep -in "file_picker" ios/Podfile.lock || true
+          echo "===== Flutter Plugin Metadata: file_picker ====="
+          grep -in -C 3 "file_picker" .flutter-plugins-dependencies || true
 
-          echo "===== file_picker Installed Pods ====="
-          find ios/Pods -iname "*file_picker*" -maxdepth 5 2>/dev/null || true
+          echo "===== All file_picker directories ====="
+          find . -iname "*file_picker*" -not -path "./.git/*" | head -80
 
-          echo "===== file_picker Symlink ====="
-          ls -la ios/.symlinks/plugins/file_picker_darwin/ios/ 2>/dev/null || true
+          echo "===== CocoaPods Plugin Symlinks ====="
+          ls -la ios/.symlinks/plugins/ 2>&1 || true
+
+          echo "===== Xcode Compiler Errors ====="
 
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
