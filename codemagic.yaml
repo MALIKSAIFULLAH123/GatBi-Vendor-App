@@ -17,7 +17,7 @@ workflows:
         bundle_identifier: com.gatbi.gatbivender
 
     scripts:
-      # STEP 1: Clean build artifacts
+      # STEP 1: Clean build artifacts safely
       - name: Clean Flutter Build
         script: |
           set -e
@@ -25,7 +25,6 @@ workflows:
           flutter clean
           rm -rf ios/Pods
           rm -rf ios/.symlinks
-          rm -f ios/Podfile.lock
 
       # STEP 2: Fetch Flutter packages
       - name: Get Flutter Packages
@@ -34,12 +33,19 @@ workflows:
           flutter pub get
           echo "Flutter dependencies installed successfully."
 
-      # STEP 3: Install CocoaPods dependencies inside ios folder
+      # STEP 3: Install CocoaPods properly inside ios directory
       - name: Install CocoaPods
         script: |
           set -e
           cd ios
-          pod install --repo-update
+          # Ensure old lock file doesn't cause sandbox sync issues
+          rm -f Podfile.lock
+          pod install
+          # Safety check to ensure Podfile.lock exists right where Xcode expects it
+          if [ ! -f "Podfile.lock" ]; then
+            echo "Error: Podfile.lock was not generated!"
+            exit 1
+          fi
           cd ..
           echo "CocoaPods installed successfully."
 
@@ -69,4 +75,3 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-        # expire_build_previous_builds: false # Optional
