@@ -1,3 +1,4 @@
+
 workflows:
   gatbi-vendor-ios:
     name: GatBi Vendor iOS Build
@@ -17,20 +18,17 @@ workflows:
         bundle_identifier: com.gatbi.gatbivender
 
     scripts:
-      - name: Clean iOS Pods
+      - name: Clean Flutter Build
         script: |
-          cd ios
-          rm -rf Pods
-          rm -f Podfile.lock
-          rm -rf .symlinks
-          cd ..
           flutter clean
+          rm -rf ios/Pods
+          rm -rf ios/.symlinks
 
-      - name: Get Flutter packages
+      - name: Get Flutter Packages
         script: |
           flutter pub get
 
-      - name: Precache iOS dependencies
+      - name: Precache iOS Dependencies
         script: |
           flutter precache --ios
 
@@ -40,24 +38,10 @@ workflows:
           pod install --repo-update
           cd ..
 
-      - name: Set up iOS code signing
+      - name: Set Up iOS Code Signing
         script: |
           xcode-project use-profiles
-      - name: Fix Pods Path in pbxproj
-        script: |
-          cd ios
-          # Agar PODS_ROOT pehle se hai toh usay update karein, warna add karein
-          if grep -q "PODS_ROOT" Runner.xcodeproj/project.pbxproj; then
-            sed -i '' 's|PODS_ROOT = .*|PODS_ROOT = "${SRCROOT}/Pods";|g' Runner.xcodeproj/project.pbxproj
-          else
-            sed -i '' 's|buildSettings = {|buildSettings = {\n\t\t\t\tPODS_ROOT = "${SRCROOT}/Pods";|g' Runner.xcodeproj/project.pbxproj
-          fi
-          if grep -q "PODS_PODFILE_DIR_PATH" Runner.xcodeproj/project.pbxproj; then
-            sed -i '' 's|PODS_PODFILE_DIR_PATH = .*|PODS_PODFILE_DIR_PATH = "${SRCROOT}/.";|g' Runner.xcodeproj/project.pbxproj
-          else
-            sed -i '' 's|buildSettings = {|buildSettings = {\n\t\t\t\tPODS_PODFILE_DIR_PATH = "${SRCROOT}/.";|g' Runner.xcodeproj/project.pbxproj
-          fi
-          cd ..
+
       - name: Build iOS IPA
         script: |
           xcode-project build-ipa \
