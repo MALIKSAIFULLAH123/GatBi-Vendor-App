@@ -17,18 +17,17 @@ workflows:
         bundle_identifier: com.gatbi.gatbivender
 
     scripts:
-      - name: Clean & Get Dependencies
+      - name: Clean & Get Flutter Dependencies
         script: |
           set -e
           flutter clean
           flutter pub get
 
-      - name: Reinstall CocoaPods
+      - name: Install CocoaPods for Flutter Plugins
         script: |
           set -e
           cd ios
           rm -rf Pods Podfile.lock
-          pod deintegrate || true
           pod install --repo-update
 
       - name: Set Up iOS Code Signing
@@ -39,7 +38,7 @@ workflows:
       - name: Build iOS IPA
         script: |
           set -e
-          # 1. Create Archive with proper Pod paths
+          # 1. Create Archive with correct Pod paths
           xcodebuild -workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
             -scheme "Runner" \
             -configuration Release \
@@ -50,7 +49,7 @@ workflows:
             PODS_PODFILE_DIR_PATH="$CM_BUILD_DIR/ios" \
             PODS_ROOT="$CM_BUILD_DIR/ios/Pods"
 
-          # 2. Export Archive to IPA using Codemagic settings
+          # 2. Export Archive to IPA
           xcode-project build-ipa \
             --archive-path "$CM_BUILD_DIR/build/ios/xcarchive/Runner.xcarchive"
 
