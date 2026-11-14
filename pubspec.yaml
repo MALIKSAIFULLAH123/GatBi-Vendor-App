@@ -1,3 +1,4 @@
+
 name: task_project
 description: "A new Flutter project."
 publish_to: 'none'
@@ -5,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.1
+  sdk: ^3.12.0
 
 dependencies:
   flutter:
@@ -18,8 +19,8 @@ dependencies:
   pretty_dio_logger: ^1.4.0
 
   # Riverpod
-  flutter_riverpod: 3.3.1
-  riverpod_annotation: 4.0.2
+  flutter_riverpod: ^3.5.0
+  riverpod_annotation: ^4.0.8
 
   # Routing
   go_router: ^17.5.0
@@ -36,10 +37,18 @@ dependencies:
   file_picker: ^13.0.0
   path_provider: ^2.1.6
   http_parser: ^4.1.2
-  web_socket_channel: ^2.4.5
+
+  # WebSocket
+  web_socket_channel: ^3.0.3
+
+  # Firebase
   firebase_core: ^4.15.0
   firebase_messaging: ^16.7.0
+
+  # Notifications
   flutter_local_notifications: ^22.3.0
+
+  # Authentication
   sign_in_with_apple: ^8.2.0
   google_sign_in: ^7.2.0
 
@@ -49,30 +58,30 @@ dev_dependencies:
 
   flutter_lints: ^6.0.0
 
-  # Code generation
-  build_runner: ^2.10.0
-  riverpod_generator: 4.0.3
+  # Code Generation
+  build_runner: ^2.17.1
+  riverpod_generator: ^4.0.10
 
-  # JSON generation
+  # JSON Generation
   json_serializable: ^6.11.1
-  
-  # App Icon Generator (Yeh naya add kiya gaya hai)
+
+  # App Icon Generator
   flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
-  
-  # Assets section (Yeh naya add kiya gaya hai)
+
   assets:
     - assets/Vender.png
 
-# App Icon Configuration (Yeh sabse neeche add kiya gaya hai)
+# App Icon Configuration
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/Vender.png"
   min_sdk_android: 21
   remove_alpha_ios: true
-  # Agar adaptive icon chahiye toh neeche wali lines uncomment kar dein:
+
+  # Optional Adaptive Icon
   # adaptive_icon_background: "#ffffff"
   # adaptive_icon_foreground: "assets/Vender.png"
