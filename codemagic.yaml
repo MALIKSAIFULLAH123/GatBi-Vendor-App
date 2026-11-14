@@ -1,3 +1,4 @@
+
 workflows:
   gatbi-vendor-ios:
     name: GatBi Vendor iOS Build
@@ -18,12 +19,12 @@ workflows:
 
     scripts:
 
-      # STEP 1: Clean Flutter build files
+      # STEP 1: Clean Flutter and old CocoaPods build files
       - name: Clean Flutter Build
         script: |
           set -e
 
-          echo "Cleaning Flutter build..."
+          echo "===== CLEANING FLUTTER BUILD ====="
 
           flutter clean
 
@@ -32,76 +33,116 @@ workflows:
           rm -rf ios/Flutter/ephemeral
 
           # Preserve Podfile.lock
-          echo "Flutter clean completed"
+          echo "Flutter cleanup completed"
 
-      # STEP 2: Get Flutter dependencies
+      # STEP 2: Install Flutter dependencies
       - name: Get Flutter Packages
         script: |
           set -e
 
+          echo "===== GETTING FLUTTER PACKAGES ====="
+
           flutter pub get
 
-          echo "Flutter dependencies installed"
+          test -f pubspec.lock
+          test -f .flutter-plugins-dependencies
 
-      # STEP 3: Repair Flutter plugin metadata
-      - name: Repair Flutter Plugin Metadata
+          echo "Flutter packages installed"
+
+      # STEP 3: Verify file_picker plugin metadata
+      - name: Verify Flutter Plugin Metadata
         script: |
           set -e
 
-          echo "Regenerating Flutter plugin metadata..."
+          echo "===== CHECKING FLUTTER PLUGINS ====="
 
-          rm -f .flutter-plugins
-          rm -f .flutter-plugins-dependencies
-
-          flutter pub get
+          test -f .flutter-plugins-dependencies
 
           echo "Checking file_picker registration..."
+
+          grep -n -i "file_picker" \
+            .flutter-plugins-dependencies
+
+          echo "Checking file_picker_darwin registration..."
 
           grep -n "file_picker_darwin" \
             .flutter-plugins-dependencies
 
-          echo "Flutter plugin metadata verified"
+          echo "Plugin metadata verified"
 
-      # STEP 4: Prepare Flutter iOS environment
+      # STEP 4: Prepare iOS Flutter environment
       - name: Prepare iOS Dependencies
         script: |
           set -e
+
+          echo "===== PREPARING IOS ENVIRONMENT ====="
 
           flutter precache --ios
 
           test -f ios/Podfile
 
-          echo "Flutter iOS environment prepared"
+          echo "iOS environment prepared"
 
-      # STEP 5: Install CocoaPods
+      # STEP 5: Install CocoaPods dependencies
       - name: Install iOS CocoaPods
         script: |
           set -e
 
-          cd ios
+          echo "===== INSTALLING COCOAPODS ====="
 
-          echo "Installing CocoaPods dependencies..."
+          cd ios
 
           pod install --repo-update
 
           cd ..
 
-          echo "Checking CocoaPods files..."
+          echo "===== VERIFYING POD INSTALLATION ====="
 
+          test -d ios/Pods
           test -f ios/Podfile.lock
           test -f ios/Pods/Manifest.lock
-          test -d ios/Pods
-
-          echo "Checking lockfile synchronization..."
 
           diff ios/Podfile.lock ios/Pods/Manifest.lock
 
           echo "CocoaPods installation successful"
 
-      # STEP 6: Configure Flutter CocoaPods XCConfig
+      # STEP 6: Verify file_picker iOS Pod
+      - name: Verify file_picker iOS Pod
+        script: |
+          set -e
+
+          echo "===== FILE PICKER POD CHECK ====="
+
+          echo "Plugin symlink directory:"
+
+          ls -la ios/.symlinks/plugins/
+
+          echo "Searching for file_picker plugin:"
+
+          find ios/.symlinks/plugins \
+            -maxdepth 3 \
+            -iname "*file_picker*" \
+            -print
+
+          echo "Checking Podfile.lock:"
+
+          grep -in -C 3 "file_picker" ios/Podfile.lock
+
+          echo "Checking CocoaPods support files:"
+
+          find "ios/Pods/Target Support Files" \
+            -maxdepth 2 \
+            -iname "*file_picker*" \
+            -print
+
+          echo "file_picker Pod verification completed"
+
+      # STEP 7: Configure Flutter CocoaPods XCConfig
       - name: Configure Flutter iOS XCConfig
         script: |
           set -e
+
+          echo "===== CONFIGURING FLUTTER XCCONFIG ====="
 
           python3 <<'PY'
           from pathlib import Path
@@ -118,59 +159,57 @@ workflows:
               config_file = flutter_dir / filename
 
               if not config_file.exists():
-                  raise SystemExit(
-                      f"ERROR: Missing {config_file}"
-                  )
+                  raise SystemExit(f"ERROR: Missing {config_file}")
 
               include = (
                   '#include? "../Pods/Target Support Files/'
                   f'Pods-Runner/Pods-Runner.{configuration}.xcconfig"'
               )
 
-              content = config_file.read_text()
-
-              # Remove duplicate CocoaPods include lines
               lines = [
-                  line for line in content.splitlines()
+                  line for line in config_file.read_text().splitlines()
                   if "Pods-Runner." not in line
               ]
 
-              # Add CocoaPods configuration first
               updated = include + "\n" + "\n".join(lines) + "\n"
 
               config_file.write_text(updated)
 
               print(f"Configured {filename}")
 
-          # Profile is optional
           profile = flutter_dir / "Profile.xcconfig"
 
           if profile.exists():
+
               include = (
                   '#include? "../Pods/Target Support Files/'
                   'Pods-Runner/Pods-Runner.profile.xcconfig"'
               )
 
-              content = profile.read_text()
+              lines = [
+                  line for line in profile.read_text().splitlines()
+                  if "Pods-Runner." not in line
+              ]
 
-              if include not in content:
-                  profile.write_text(include + "\n" + content)
+              profile.write_text(
+                  include + "\n" + "\n".join(lines) + "\n"
+              )
 
               print("Configured Profile.xcconfig")
-          else:
-              print("Profile.xcconfig not present; skipping")
 
-          print("CocoaPods XCConfig configuration completed")
+          print("XCConfig setup completed")
           PY
 
-      # STEP 7: Verify Flutter configuration
+      # STEP 8: Verify Flutter configuration
       - name: Verify Flutter Configuration
         script: |
           set -e
 
-          echo "Checking Flutter configuration..."
+          echo "===== VERIFYING FLUTTER CONFIGURATION ====="
 
           test -f ios/Flutter/Generated.xcconfig
+          test -f ios/Flutter/Debug.xcconfig
+          test -f ios/Flutter/Release.xcconfig
 
           grep -q "Generated.xcconfig" \
             ios/Flutter/Debug.xcconfig
@@ -178,14 +217,14 @@ workflows:
           grep -q "Generated.xcconfig" \
             ios/Flutter/Release.xcconfig
 
-          echo "Generated Flutter configuration verified"
+          echo "Flutter configuration verified"
 
-      # STEP 8: Verify CocoaPods configuration
+      # STEP 9: Verify CocoaPods configuration
       - name: Verify CocoaPods Configuration
         script: |
           set -e
 
-          echo "Checking iOS project..."
+          echo "===== VERIFYING COCOAPODS CONFIGURATION ====="
 
           test -f ios/Podfile
           test -f ios/Podfile.lock
@@ -193,49 +232,37 @@ workflows:
           test -f ios/Runner.xcodeproj/project.pbxproj
           test -d ios/Runner.xcworkspace
 
-          echo "Checking lockfile synchronization..."
-
           diff ios/Podfile.lock ios/Pods/Manifest.lock
 
-          echo "Checking CocoaPods configuration..."
-
-          grep -q "Pods-Runner.debug.xcconfig" ios/Flutter/Debug.xcconfig
-          grep -q "Pods-Runner.release.xcconfig" ios/Flutter/Release.xcconfig
-
-          echo "Checking file_picker metadata..."
-
-          grep -n "file_picker_darwin" .flutter-plugins-dependencies || true
-
-          echo "Checking file_picker Pod registration..."
-
-          grep -n -i "file_picker" ios/Podfile.lock || true
-
-          echo "Checking installed plugin directory..."
-
-          ls -la ios/.symlinks/plugins/ || true
-
-          echo "Checking CocoaPods support files..."
-
           test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+
           test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 
-          echo "All structural CocoaPods checks passed"
+          grep -q "Pods-Runner.debug.xcconfig" \
+            ios/Flutter/Debug.xcconfig
 
-      # STEP 9: Configure Apple code signing
+          grep -q "Pods-Runner.release.xcconfig" \
+            ios/Flutter/Release.xcconfig
+
+          echo "CocoaPods configuration verified"
+
+      # STEP 10: Configure Apple code signing
       - name: Set Up iOS Code Signing
         script: |
           set -e
+
+          echo "===== CONFIGURING APPLE SIGNING ====="
 
           xcode-project use-profiles
 
           echo "Apple code signing configured"
 
-      # STEP 10: Verify Xcode workspace
+      # STEP 11: Verify Xcode workspace
       - name: Verify Xcode Workspace
         script: |
           set -e
 
-          echo "Checking Xcode workspace..."
+          echo "===== VERIFYING XCODE WORKSPACE ====="
 
           xcodebuild \
             -workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
@@ -243,28 +270,28 @@ workflows:
             -showBuildSettings \
             > /tmp/gatbi_build_settings.log
 
-          echo "Xcode workspace verified"
-
           grep -E \
             'PODS_ROOT =|PODS_PODFILE_DIR_PATH =|PRODUCT_BUNDLE_IDENTIFIER =' \
             /tmp/gatbi_build_settings.log || true
 
-      # STEP 11: Build signed iOS IPA (temporary diagnostic version)
+          echo "Xcode workspace verified"
+
+      # STEP 12: Build signed iOS IPA
       - name: Build iOS IPA
         script: |
           set +e
 
-          echo "===== FILE PICKER PODSPEC ====="
-          ls -la ios/.symlinks/plugins/file_picker_darwin/ios/
-          cat ios/.symlinks/plugins/file_picker_darwin/ios/file_picker_darwin.podspec
+          echo "===== FINAL FILE PICKER CHECK ====="
 
-          echo "===== POD LOCK ENTRIES ====="
+          grep -n -C 3 "file_picker_darwin" \
+            ios/Runner/GeneratedPluginRegistrant.m || true
+
+          echo "===== COCOAPODS FILE PICKER CHECK ====="
+
           grep -in -C 3 "file_picker" ios/Podfile.lock || true
 
-          echo "===== GENERATED REGISTRANT ====="
-          cat ios/Runner/GeneratedPluginRegistrant.m
+          echo "===== BUILDING SIGNED IOS IPA ====="
 
-          echo "===== BUILD IPA ====="
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
             --scheme Runner
@@ -272,10 +299,13 @@ workflows:
           BUILD_STATUS=$?
 
           echo "===== XCODE ERROR DETAILS ====="
-          grep -in -C 5 -E "error:|fatal error:|module not found|No such module" \
+
+          grep -in -C 5 -E \
+            "error:|fatal error:|module not found|No such module" \
             /tmp/xcodebuild_logs/*.log 2>/dev/null || true
 
-          echo "===== END BUILD DIAGNOSTICS ====="
+          echo "===== BUILD FINISHED ====="
+
           exit $BUILD_STATUS
 
     artifacts:
