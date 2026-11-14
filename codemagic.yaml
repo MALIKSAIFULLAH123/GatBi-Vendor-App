@@ -26,9 +26,14 @@ workflows:
       - name: Install CocoaPods
         script: |
           set -e
+          find . -name "Podfile.lock" -delete
           cd ios
-          pod install
+          pod install --repo-update
           cd ..
+          # Ensure Podfile.lock is copied/accessible at root if needed
+          if [ -f ios/Podfile.lock ]; then
+            cp ios/Podfile.lock ./Podfile.lock
+          fi
 
       - name: Set Up iOS Code Signing
         script: |
