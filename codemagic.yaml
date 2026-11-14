@@ -249,32 +249,34 @@ workflows:
             'PODS_ROOT =|PODS_PODFILE_DIR_PATH =|PRODUCT_BUNDLE_IDENTIFIER =' \
             /tmp/gatbi_build_settings.log || true
 
-      # STEP 11: Build signed iOS IPA
+      # STEP 11: Build signed iOS IPA (temporary diagnostic version)
       - name: Build iOS IPA
         script: |
-          set -e
+          set +e
 
-          echo "Building signed iOS IPA..."
+          echo "===== FILE PICKER PODSPEC ====="
+          ls -la ios/.symlinks/plugins/file_picker_darwin/ios/
+          cat ios/.symlinks/plugins/file_picker_darwin/ios/file_picker_darwin.podspec
 
-          echo "===== GeneratedPluginRegistrant FIRST 80 LINES ====="
-          head -80 ios/Runner/GeneratedPluginRegistrant.m
+          echo "===== POD LOCK ENTRIES ====="
+          grep -in -C 3 "file_picker" ios/Podfile.lock || true
 
-          echo "===== Flutter Plugin Metadata: file_picker ====="
-          grep -in -C 3 "file_picker" .flutter-plugins-dependencies || true
+          echo "===== GENERATED REGISTRANT ====="
+          cat ios/Runner/GeneratedPluginRegistrant.m
 
-          echo "===== All file_picker directories ====="
-          find . -iname "*file_picker*" -not -path "./.git/*" | head -80
-
-          echo "===== CocoaPods Plugin Symlinks ====="
-          ls -la ios/.symlinks/plugins/ 2>&1 || true
-
-          echo "===== Xcode Compiler Errors ====="
-
+          echo "===== BUILD IPA ====="
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
             --scheme Runner
 
-          echo "iOS IPA build completed successfully"
+          BUILD_STATUS=$?
+
+          echo "===== XCODE ERROR DETAILS ====="
+          grep -in -C 5 -E "error:|fatal error:|module not found|No such module" \
+            /tmp/xcodebuild_logs/*.log 2>/dev/null || true
+
+          echo "===== END BUILD DIAGNOSTICS ====="
+          exit $BUILD_STATUS
 
     artifacts:
       - build/ios/ipa/*.ipa
