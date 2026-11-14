@@ -1,6 +1,6 @@
 workflows:
   gatbi-vendor-ios:
-    name: GatBi Vendor iOS Build
+    name: GatBi Vendor iOS Build & Publish
     max_build_duration: 120
     instance_type: mac_mini_m2
 
@@ -25,6 +25,7 @@ workflows:
           flutter clean
           rm -rf ios/Pods
           rm -rf ios/.symlinks
+          rm -f ios/Podfile.lock
 
       # STEP 2: Fetch Flutter packages
       - name: Get Flutter Packages
@@ -33,7 +34,7 @@ workflows:
           flutter pub get
           echo "Flutter dependencies installed successfully."
 
-      # STEP 3: Install CocoaPods dependencies (ensure working directory is ios)
+      # STEP 3: Install CocoaPods dependencies inside ios folder
       - name: Install CocoaPods
         script: |
           set -e
@@ -49,7 +50,7 @@ workflows:
           xcode-project use-profiles
           echo "Apple code signing configured."
 
-      # STEP 5: Build iOS IPA using Codemagic CLI
+      # STEP 5: Build iOS IPA
       - name: Build iOS IPA
         script: |
           set -e
@@ -63,3 +64,9 @@ workflows:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # expire_build_previous_builds: false # Optional
