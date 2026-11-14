@@ -4,6 +4,7 @@ workflows:
     name: GatBi Vendor iOS Build
     max_build_duration: 120
     instance_type: mac_mini_m2
+
     integrations:
       app_store_connect: ios
 
@@ -34,7 +35,7 @@ workflows:
       - name: Install iOS CocoaPods
         script: |
           cd ios
-          pod install --repo-update
+          pod install
           cd ..
 
       - name: Set Up iOS Code Signing
