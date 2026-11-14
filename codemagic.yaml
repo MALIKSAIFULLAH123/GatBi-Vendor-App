@@ -35,10 +35,12 @@ workflows:
           set -e
           xcode-project use-profiles
 
-      - name: Build iOS Release IPA via Flutter
+      - name: Build iOS IPA
         script: |
           set -e
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist || flutter build ipa --release
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
+            --scheme "Runner"
 
     artifacts:
       - build/ios/ipa/*.ipa
