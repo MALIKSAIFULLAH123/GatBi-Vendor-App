@@ -33,7 +33,7 @@ workflows:
           flutter pub get
           echo "Flutter dependencies installed successfully."
 
-      # STEP 3: Install CocoaPods dependencies using Flutter's built-in command
+      # STEP 3: Install CocoaPods dependencies (ensure working directory is ios)
       - name: Install CocoaPods
         script: |
           set -e
