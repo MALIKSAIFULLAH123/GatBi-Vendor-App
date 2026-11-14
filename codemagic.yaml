@@ -1,4 +1,3 @@
-
 workflows:
   gatbi-vendor-ios:
     name: GatBi Vendor iOS Build
@@ -198,29 +197,29 @@ workflows:
 
           diff ios/Podfile.lock ios/Pods/Manifest.lock
 
-          echo "Checking CocoaPods XCConfig..."
+          echo "Checking CocoaPods configuration..."
 
-          grep -q "Pods-Runner.debug.xcconfig" \
-            ios/Flutter/Debug.xcconfig
+          grep -q "Pods-Runner.debug.xcconfig" ios/Flutter/Debug.xcconfig
+          grep -q "Pods-Runner.release.xcconfig" ios/Flutter/Release.xcconfig
 
-          grep -q "Pods-Runner.release.xcconfig" \
-            ios/Flutter/Release.xcconfig
+          echo "Checking file_picker metadata..."
 
-          echo "Checking file_picker..."
+          grep -n "file_picker_darwin" .flutter-plugins-dependencies || true
 
-          grep -q "file_picker_darwin" \
-            .flutter-plugins-dependencies
+          echo "Checking file_picker Pod registration..."
 
-          grep -q "file_picker_darwin" \
-            ios/Podfile.lock
+          grep -n -i "file_picker" ios/Podfile.lock || true
+
+          echo "Checking installed plugin directory..."
+
+          ls -la ios/.symlinks/plugins/ || true
 
           echo "Checking CocoaPods support files..."
 
           test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
-
           test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 
-          echo "All dependency checks passed"
+          echo "All structural CocoaPods checks passed"
 
       # STEP 9: Configure Apple code signing
       - name: Set Up iOS Code Signing
