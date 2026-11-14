@@ -17,23 +17,19 @@ workflows:
         bundle_identifier: com.gatbi.gatbivender
 
     scripts:
-      - name: Clean Project
+      - name: Clean & Get Dependencies
         script: |
           set -e
           flutter clean
           flutter pub get
 
-      - name: Install CocoaPods
+      - name: Reinstall CocoaPods
         script: |
           set -e
-          find . -name "Podfile.lock" -delete
           cd ios
+          rm -rf Pods Podfile.lock
+          pod deintegrate || true
           pod install --repo-update
-          cd ..
-          # Ensure Podfile.lock is copied/accessible at root if needed
-          if [ -f ios/Podfile.lock ]; then
-            cp ios/Podfile.lock ./Podfile.lock
-          fi
 
       - name: Set Up iOS Code Signing
         script: |
@@ -45,7 +41,8 @@ workflows:
           set -e
           xcode-project build-ipa \
             --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
-            --scheme "Runner"
+            --scheme "Runner" \
+            --xcargs="PODS_PODFILE_DIR_PATH=$CM_BUILD_DIR/ios PODS_ROOT=$CM_BUILD_DIR/ios/Pods"
 
     artifacts:
       - build/ios/ipa/*.ipa
