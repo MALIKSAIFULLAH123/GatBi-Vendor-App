@@ -1,3 +1,4 @@
+
 workflows:
   gatbi-vendor-ios:
     name: GatBi Vendor iOS Build
@@ -38,7 +39,8 @@ workflows:
       - name: Build iOS IPA with Flutter
         script: |
           set -e
-          flutter build ipa --release
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
