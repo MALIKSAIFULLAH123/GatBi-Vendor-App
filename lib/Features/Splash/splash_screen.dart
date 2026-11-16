@@ -1,23 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Services/auth_session.dart';
+import '../../Services/device_registration_helper.dart';
+import '../../Services/dio.dart';
 import '../../Theme/app_colors.dart';
 import '../../Theme/app_dimensions.dart';
 import '../../Theme/app_text_styles.dart';
 import '../../Routes/app_route.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   // ═══════════════════════════════════════════════════════════════════════════
   // CONSTANTS
@@ -120,6 +123,13 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     if (isAuthenticated) {
+      // Keep the backend FCM token fresh for restored sessions.
+      unawaited(
+        DeviceRegistrationHelper.registerDevice(
+          dioClient: ref.read(dioProvider),
+        ),
+      );
+
       // User is already logged in.
       context.go(AppRoutes.bottombar);
     } else {

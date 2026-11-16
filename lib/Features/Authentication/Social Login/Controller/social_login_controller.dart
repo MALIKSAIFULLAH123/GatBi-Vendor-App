@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../Services/api_exception.dart';
 import '../../../../Services/auth_session.dart';
 import '../../../../Services/device_registration_helper.dart';
@@ -11,6 +13,8 @@ import '../Services/google_sign_in_service.dart';
 
 const String _defaultGoogleServerClientId =
     '391572737407-8c5s56e0r0rkksoil3uhugfs8earbtbm.apps.googleusercontent.com';
+const String _defaultGoogleIosClientId =
+    '391572737407-pdul2r7dfb3mmfaktu5ujp0vch5c1r1e.apps.googleusercontent.com';
 
 class SocialLoginController {
   SocialLoginController({required DioClient dioClient})
@@ -38,8 +42,13 @@ class SocialLoginController {
     }
 
     try {
+      final clientId = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
+          ? _defaultGoogleIosClientId
+          : null;
+
       final account = await GoogleSignInService.signIn(
         serverClientId: serverClientId,
+        clientId: clientId,
       );
 
       if (account == null) {
@@ -78,9 +87,7 @@ class SocialLoginController {
     }
   }
 
-  Future<SocialLoginResult> signInWithApple({
-    SocialProvider? provider,
-  }) async {
+  Future<SocialLoginResult> signInWithApple({SocialProvider? provider}) async {
     try {
       final result = await AppleLoginRepository(
         _dioClient,
@@ -101,9 +108,7 @@ class SocialLoginController {
     }
   }
 
-  Future<SocialLoginResult> _completeIfNeeded(
-    SocialLoginResult result,
-  ) async {
+  Future<SocialLoginResult> _completeIfNeeded(SocialLoginResult result) async {
     if (!result.success || !result.hasToken) {
       return result;
     }

@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'Routes/app_route.dart';
 import 'Features/Push Notification/Services/firebase_messaging_service.dart';
+import 'Services/device_registration_helper.dart';
+import 'Services/dio.dart';
+import 'Services/token_storage.dart';
 import 'Theme/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -32,10 +35,30 @@ Future<void> main() async {
   await FirebaseMessagingService.instance.initialize();
 
   // ============================================================
+  // RIVERPOD CONTAINER
+  // ============================================================
+
+  final container = ProviderContainer();
+
+  // ============================================================
+  // FCM TOKEN REFRESH -> BACKEND
+  // ============================================================
+
+  FirebaseMessagingService.instance.onTokenRefresh = (_) async {
+    if (!await SecureStorageService.instance.hasToken()) {
+      return;
+    }
+
+    await DeviceRegistrationHelper.registerDevice(
+      dioClient: container.read(dioProvider),
+    );
+  };
+
+  // ============================================================
   // RUN APP
   // ============================================================
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

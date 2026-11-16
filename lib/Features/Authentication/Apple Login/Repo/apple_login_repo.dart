@@ -113,10 +113,20 @@ class AppleLoginRepository {
       );
     }
 
-    final email = appleCredential.email;
+    final claims = _decodeJwtPayload(idToken);
+    final tokenEmail = _nonEmptyString(claims['email']);
+    final tokenSubject = _nonEmptyString(claims['sub']);
+
+    final email = _nonEmptyString(appleCredential.email) ?? tokenEmail;
     final firstName = appleCredential.givenName ?? '';
     final lastName = appleCredential.familyName ?? '';
     final fullName = '$firstName $lastName'.trim();
+
+    if (kDebugMode) {
+      debugPrint('EMAIL FROM CREDENTIAL: ${appleCredential.email != null}');
+      debugPrint('EMAIL FROM ID TOKEN: ${tokenEmail != null}');
+      debugPrint('APPLE SUBJECT PRESENT: ${tokenSubject != null}');
+    }
 
     return SocialAuthRepository(_dioClient).loginWithProvider(
       provider: 'apple',
@@ -143,6 +153,33 @@ class AppleLoginRepository {
     final random = Random.secure();
     final bytes = List<int>.generate(32, (_) => random.nextInt(256));
     return base64UrlEncode(bytes).replaceAll('=', '');
+  }
+
+  Map<String, dynamic> _decodeJwtPayload(String token) {
+    try {
+      final parts = token.split('.');
+
+      if (parts.length < 2) {
+        return const <String, dynamic>{};
+      }
+
+      final normalized = base64Url.normalize(parts[1]);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final payload = jsonDecode(decoded);
+
+      return payload is Map
+          ? Map<String, dynamic>.from(payload)
+          : const <String, dynamic>{};
+    } catch (_) {
+      return const <String, dynamic>{};
+    }
+  }
+
+  String? _nonEmptyString(Object? value) {
+    if (value is String && value.trim().isNotEmpty) {
+      return value.trim();
+    }
+    return null;
   }
 
   WebAuthenticationOptions? _webAuthenticationOptions(String serviceId) {

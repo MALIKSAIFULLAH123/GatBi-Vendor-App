@@ -11,40 +11,36 @@ import '../../../../firebase_options.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._();
 
-  static final FirebaseMessagingService instance =
-      FirebaseMessagingService._();
+  static final FirebaseMessagingService instance = FirebaseMessagingService._();
 
-  final FirebaseMessaging _messaging =
-      FirebaseMessaging.instance;
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  final FlutterLocalNotificationsPlugin
-      _localNotifications =
+  final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
-  StreamSubscription<String>?
-      _tokenRefreshSubscription;
+  StreamSubscription<String>? _tokenRefreshSubscription;
 
-  StreamSubscription<RemoteMessage>?
-      _foregroundMessageSubscription;
+  StreamSubscription<RemoteMessage>? _foregroundMessageSubscription;
 
-  StreamSubscription<RemoteMessage>?
-      _messageOpenedAppSubscription;
+  StreamSubscription<RemoteMessage>? _messageOpenedAppSubscription;
+
+  /// Called whenever FCM rotates the token so the app can
+  /// re-register the new token with the backend.
+  Future<void> Function(String token)? onTokenRefresh;
 
   // ============================================================
   // ANDROID NOTIFICATION CHANNEL
   // ============================================================
 
-  static const AndroidNotificationChannel
-      _notificationChannel =
+  static const AndroidNotificationChannel _notificationChannel =
       AndroidNotificationChannel(
-    'gatbi_vendor_notifications',
-    'Gatbi Vendor Notifications',
-    description:
-        'Notifications for Gatbi Vendor application.',
-    importance: Importance.high,
-    playSound: true,
-    enableVibration: true,
-  );
+        'gatbi_vendor_notifications',
+        'Gatbi Vendor Notifications',
+        description: 'Notifications for Gatbi Vendor application.',
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true,
+      );
 
   // ============================================================
   // INITIALIZE
@@ -54,15 +50,9 @@ class FirebaseMessagingService {
     try {
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '==============================================',
-        );
-        debugPrint(
-          '       FIREBASE CLOUD MESSAGING SETUP',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('==============================================');
+        debugPrint('       FIREBASE CLOUD MESSAGING SETUP');
+        debugPrint('==============================================');
       }
 
       await _initializeLocalNotifications();
@@ -82,30 +72,18 @@ class FirebaseMessagingService {
       await _checkInitialMessage();
 
       if (kDebugMode) {
-        debugPrint(
-          '==============================================',
-        );
-        debugPrint(
-          '       FCM INITIALIZATION COMPLETED',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('==============================================');
+        debugPrint('       FCM INITIALIZATION COMPLETED');
+        debugPrint('==============================================');
         debugPrint('');
       }
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== FCM INITIALIZATION ERROR ==========',
-        );
+        debugPrint('========== FCM INITIALIZATION ERROR ==========');
         debugPrint('ERROR: $error');
-        debugPrint(
-          'STACK TRACE: $stackTrace',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('STACK TRACE: $stackTrace');
+        debugPrint('==============================================');
         debugPrint('');
       }
     }
@@ -121,30 +99,25 @@ class FirebaseMessagingService {
       // ANDROID
       // ----------------------------------------------------------
 
-      const AndroidInitializationSettings
-          androidSettings =
-          AndroidInitializationSettings(
-        '@mipmap/ic_launcher',
-      );
+      const AndroidInitializationSettings androidSettings =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
 
       // ----------------------------------------------------------
       // IOS
       // ----------------------------------------------------------
 
-      const DarwinInitializationSettings
-          iosSettings =
+      const DarwinInitializationSettings iosSettings =
           DarwinInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
-      );
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          );
 
       // ----------------------------------------------------------
       // GENERAL SETTINGS
       // ----------------------------------------------------------
 
-      const InitializationSettings settings =
-          InitializationSettings(
+      const InitializationSettings settings = InitializationSettings(
         android: androidSettings,
         iOS: iosSettings,
       );
@@ -155,8 +128,7 @@ class FirebaseMessagingService {
 
       await _localNotifications.initialize(
         settings: settings,
-        onDidReceiveNotificationResponse:
-            _onLocalNotificationTap,
+        onDidReceiveNotificationResponse: _onLocalNotificationTap,
       );
 
       // ----------------------------------------------------------
@@ -164,54 +136,36 @@ class FirebaseMessagingService {
       // ----------------------------------------------------------
 
       if (Platform.isAndroid) {
-        final AndroidFlutterLocalNotificationsPlugin?
-            androidPlugin =
+        final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
             _localNotifications
                 .resolvePlatformSpecificImplementation<
-                    AndroidFlutterLocalNotificationsPlugin>();
+                  AndroidFlutterLocalNotificationsPlugin
+                >();
 
-        await androidPlugin
-            ?.createNotificationChannel(
-          _notificationChannel,
-        );
+        await androidPlugin?.createNotificationChannel(_notificationChannel);
 
-        await androidPlugin
-            ?.requestNotificationsPermission();
+        await androidPlugin?.requestNotificationsPermission();
       }
 
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== LOCAL NOTIFICATION READY ==========',
-        );
-        debugPrint(
-          'CHANNEL ID: ${_notificationChannel.id}',
-        );
-        debugPrint(
-          'CHANNEL NAME: ${_notificationChannel.name}',
-        );
+        debugPrint('========== LOCAL NOTIFICATION READY ==========');
+        debugPrint('CHANNEL ID: ${_notificationChannel.id}');
+        debugPrint('CHANNEL NAME: ${_notificationChannel.name}');
         debugPrint(
           'IMPORTANCE: '
           '${_notificationChannel.importance}',
         );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('==============================================');
         debugPrint('');
       }
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== LOCAL NOTIFICATION ERROR ==========',
-        );
+        debugPrint('========== LOCAL NOTIFICATION ERROR ==========');
         debugPrint('ERROR: $error');
-        debugPrint(
-          'STACK TRACE: $stackTrace',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('STACK TRACE: $stackTrace');
+        debugPrint('==============================================');
         debugPrint('');
       }
     }
@@ -221,21 +175,15 @@ class FirebaseMessagingService {
   // LOCAL NOTIFICATION TAP
   // ============================================================
 
-  void _onLocalNotificationTap(
-    NotificationResponse response,
-  ) {
+  void _onLocalNotificationTap(NotificationResponse response) {
     if (kDebugMode) {
       debugPrint('');
-      debugPrint(
-        '========== LOCAL NOTIFICATION TAP ==========',
-      );
+      debugPrint('========== LOCAL NOTIFICATION TAP ==========');
       debugPrint(
         'PAYLOAD: '
         '${response.payload ?? 'N/A'}',
       );
-      debugPrint(
-        '============================================',
-      );
+      debugPrint('============================================');
       debugPrint('');
     }
   }
@@ -246,8 +194,7 @@ class FirebaseMessagingService {
 
   Future<void> _requestPermission() async {
     try {
-      final NotificationSettings settings =
-          await _messaging.requestPermission(
+      final NotificationSettings settings = await _messaging.requestPermission(
         alert: true,
         announcement: false,
         badge: true,
@@ -259,32 +206,20 @@ class FirebaseMessagingService {
 
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '---------- FCM PERMISSION ----------',
-        );
+        debugPrint('---------- FCM PERMISSION ----------');
         debugPrint(
           'AUTHORIZATION STATUS: '
           '${settings.authorizationStatus}',
         );
-        debugPrint(
-          'ALERT: ${settings.alert}',
-        );
-        debugPrint(
-          'BADGE: ${settings.badge}',
-        );
-        debugPrint(
-          'SOUND: ${settings.sound}',
-        );
-        debugPrint(
-          '------------------------------------',
-        );
+        debugPrint('ALERT: ${settings.alert}');
+        debugPrint('BADGE: ${settings.badge}');
+        debugPrint('SOUND: ${settings.sound}');
+        debugPrint('------------------------------------');
         debugPrint('');
       }
     } catch (error) {
       if (kDebugMode) {
-        debugPrint(
-          'FCM permission error: $error',
-        );
+        debugPrint('FCM permission error: $error');
       }
     }
   }
@@ -293,23 +228,19 @@ class FirebaseMessagingService {
   // FOREGROUND PRESENTATION
   // ============================================================
 
-  Future<void>
-      _configureForegroundNotificationPresentation() async {
+  Future<void> _configureForegroundNotificationPresentation() async {
     if (!Platform.isIOS) {
       return;
     }
 
-    await _messaging
-        .setForegroundNotificationPresentationOptions(
+    await _messaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
 
     if (kDebugMode) {
-      debugPrint(
-        'iOS foreground notification presentation enabled.',
-      );
+      debugPrint('iOS foreground notification presentation enabled.');
     }
   }
 
@@ -320,8 +251,7 @@ class FirebaseMessagingService {
   Future<String?> getToken() async {
     try {
       if (Platform.isIOS) {
-        final String? apnsToken =
-            await _waitForApnsToken();
+        final String? apnsToken = await _waitForApnsToken();
 
         if (kDebugMode) {
           debugPrint(
@@ -330,8 +260,7 @@ class FirebaseMessagingService {
           );
         }
 
-        if (apnsToken == null ||
-            apnsToken.isEmpty) {
+        if (apnsToken == null || apnsToken.isEmpty) {
           if (kDebugMode) {
             debugPrint(
               'FCM TOKEN: '
@@ -343,26 +272,15 @@ class FirebaseMessagingService {
         }
       }
 
-      final String? token =
-          await _messaging.getToken();
+      final String? token = await _messaging.getToken();
 
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '==============================================',
-        );
-        debugPrint(
-          '                 FCM TOKEN',
-        );
-        debugPrint(
-          '==============================================',
-        );
-        debugPrint(
-          token ?? 'FCM TOKEN IS NULL',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('==============================================');
+        debugPrint('                 FCM TOKEN');
+        debugPrint('==============================================');
+        debugPrint(token ?? 'FCM TOKEN IS NULL');
+        debugPrint('==============================================');
         debugPrint('');
       }
 
@@ -370,16 +288,10 @@ class FirebaseMessagingService {
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== FCM TOKEN ERROR ==========',
-        );
+        debugPrint('========== FCM TOKEN ERROR ==========');
         debugPrint('ERROR: $error');
-        debugPrint(
-          'STACK TRACE: $stackTrace',
-        );
-        debugPrint(
-          '=====================================',
-        );
+        debugPrint('STACK TRACE: $stackTrace');
+        debugPrint('=====================================');
         debugPrint('');
       }
 
@@ -401,15 +313,12 @@ class FirebaseMessagingService {
 
   Future<String?> _waitForApnsToken({
     int attempts = 10,
-    Duration delay =
-        const Duration(milliseconds: 500),
+    Duration delay = const Duration(milliseconds: 500),
   }) async {
     for (int i = 0; i < attempts; i++) {
-      final String? token =
-          await _messaging.getAPNSToken();
+      final String? token = await _messaging.getAPNSToken();
 
-      if (token != null &&
-          token.isNotEmpty) {
+      if (token != null && token.isNotEmpty) {
         return token;
       }
 
@@ -426,35 +335,35 @@ class FirebaseMessagingService {
   void _listenToTokenRefresh() {
     _tokenRefreshSubscription?.cancel();
 
-    _tokenRefreshSubscription =
-        _messaging.onTokenRefresh.listen(
-      (String token) {
+    _tokenRefreshSubscription = _messaging.onTokenRefresh.listen(
+      (String token) async {
         if (kDebugMode) {
           debugPrint('');
-          debugPrint(
-            '==============================================',
-          );
-          debugPrint(
-            '             FCM TOKEN REFRESHED',
-          );
-          debugPrint(
-            '==============================================',
-          );
+          debugPrint('==============================================');
+          debugPrint('             FCM TOKEN REFRESHED');
+          debugPrint('==============================================');
           debugPrint(token);
-          debugPrint(
-            '==============================================',
-          );
+          debugPrint('==============================================');
           debugPrint('');
         }
 
-        // Device registration API
-        // yahan later connect karenge.
+        final handler = onTokenRefresh;
+
+        if (handler == null) {
+          return;
+        }
+
+        try {
+          await handler(token);
+        } catch (error) {
+          if (kDebugMode) {
+            debugPrint('FCM token refresh handler error: $error');
+          }
+        }
       },
       onError: (Object error) {
         if (kDebugMode) {
-          debugPrint(
-            'FCM token refresh error: $error',
-          );
+          debugPrint('FCM token refresh error: $error');
         }
       },
     );
@@ -467,23 +376,15 @@ class FirebaseMessagingService {
   void _listenToForegroundMessages() {
     _foregroundMessageSubscription?.cancel();
 
-    _foregroundMessageSubscription =
-        FirebaseMessaging.onMessage.listen(
+    _foregroundMessageSubscription = FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
-        _printMessage(
-          message,
-          source: 'FOREGROUND',
-        );
+        _printMessage(message, source: 'FOREGROUND');
 
-        await _showForegroundNotification(
-          message,
-        );
+        await _showForegroundNotification(message);
       },
       onError: (Object error) {
         if (kDebugMode) {
-          debugPrint(
-            'FCM foreground listener error: $error',
-          );
+          debugPrint('FCM foreground listener error: $error');
         }
       },
     );
@@ -493,48 +394,48 @@ class FirebaseMessagingService {
   // SHOW FOREGROUND NOTIFICATION
   // ============================================================
 
-  Future<void> _showForegroundNotification(
-    RemoteMessage message,
-  ) async {
+  Future<void> _showForegroundNotification(RemoteMessage message) async {
     try {
-      final RemoteNotification? notification =
-          message.notification;
+      // iOS already presents notification-payload messages in the
+      // foreground through the presentation options above. Showing a
+      // local notification as well would duplicate the banner.
+      if (Platform.isIOS && message.notification != null) {
+        return;
+      }
+
+      final RemoteNotification? notification = message.notification;
 
       final String title =
           notification?.title ??
-              message.data['title']?.toString() ??
-              'Gatbi Vendor';
+          message.data['title']?.toString() ??
+          'Gatbi Vendor';
 
       final String body =
           notification?.body ??
-              message.data['body']?.toString() ??
-              'You have a new notification.';
+          message.data['body']?.toString() ??
+          'You have a new notification.';
 
       // ----------------------------------------------------------
       // ANDROID
       // ----------------------------------------------------------
 
-      const AndroidNotificationDetails
-          androidDetails =
+      const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-        'gatbi_vendor_notifications',
-        'Gatbi Vendor Notifications',
-        channelDescription:
-            'Notifications for Gatbi Vendor application.',
-        importance: Importance.high,
-        priority: Priority.high,
-        playSound: true,
-        enableVibration: true,
-        icon: '@mipmap/ic_launcher',
-      );
+            'gatbi_vendor_notifications',
+            'Gatbi Vendor Notifications',
+            channelDescription: 'Notifications for Gatbi Vendor application.',
+            importance: Importance.high,
+            priority: Priority.high,
+            playSound: true,
+            enableVibration: true,
+            icon: '@mipmap/ic_launcher',
+          );
 
       // ----------------------------------------------------------
       // IOS
       // ----------------------------------------------------------
 
-      const DarwinNotificationDetails
-          iosDetails =
-          DarwinNotificationDetails(
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
@@ -544,16 +445,13 @@ class FirebaseMessagingService {
       // GENERAL
       // ----------------------------------------------------------
 
-      const NotificationDetails details =
-          NotificationDetails(
+      const NotificationDetails details = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
       );
 
       final int notificationId =
-          message.messageId?.hashCode ??
-              DateTime.now()
-                  .millisecondsSinceEpoch;
+          message.messageId?.hashCode ?? DateTime.now().millisecondsSinceEpoch;
 
       // ----------------------------------------------------------
       // SHOW
@@ -564,48 +462,26 @@ class FirebaseMessagingService {
         title: title,
         body: body,
         notificationDetails: details,
-        payload: message.data.isNotEmpty
-            ? message.data.toString()
-            : null,
+        payload: message.data.isNotEmpty ? message.data.toString() : null,
       );
 
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== LOCAL NOTIFICATION SHOWN ==========',
-        );
-        debugPrint(
-          'ID: $notificationId',
-        );
-        debugPrint(
-          'TITLE: $title',
-        );
-        debugPrint(
-          'BODY: $body',
-        );
-        debugPrint(
-          'DATA: ${message.data}',
-        );
-        debugPrint(
-          '==============================================',
-        );
+        debugPrint('========== LOCAL NOTIFICATION SHOWN ==========');
+        debugPrint('ID: $notificationId');
+        debugPrint('TITLE: $title');
+        debugPrint('BODY: $body');
+        debugPrint('DATA: ${message.data}');
+        debugPrint('==============================================');
         debugPrint('');
       }
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== SHOW NOTIFICATION ERROR ==========',
-        );
-        debugPrint(
-          'ERROR: $error',
-        );
-        debugPrint(
-          'STACK TRACE: $stackTrace',
-        );
-        debugPrint(
-          '=============================================',
-        );
+        debugPrint('========== SHOW NOTIFICATION ERROR ==========');
+        debugPrint('ERROR: $error');
+        debugPrint('STACK TRACE: $stackTrace');
+        debugPrint('=============================================');
         debugPrint('');
       }
     }
@@ -618,21 +494,15 @@ class FirebaseMessagingService {
   void _listenToNotificationOpenedApp() {
     _messageOpenedAppSubscription?.cancel();
 
-    _messageOpenedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen(
+    _messageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(
       (RemoteMessage message) {
-        _printMessage(
-          message,
-          source: 'OPENED FROM BACKGROUND',
-        );
+        _printMessage(message, source: 'OPENED FROM BACKGROUND');
 
         _handleNotificationTap(message);
       },
       onError: (Object error) {
         if (kDebugMode) {
-          debugPrint(
-            'FCM notification opened error: $error',
-          );
+          debugPrint('FCM notification opened error: $error');
         }
       },
     );
@@ -644,30 +514,22 @@ class FirebaseMessagingService {
 
   Future<void> _checkInitialMessage() async {
     try {
-      final RemoteMessage? message =
-          await _messaging.getInitialMessage();
+      final RemoteMessage? message = await _messaging.getInitialMessage();
 
       if (message == null) {
         if (kDebugMode) {
-          debugPrint(
-            'No initial FCM notification found.',
-          );
+          debugPrint('No initial FCM notification found.');
         }
 
         return;
       }
 
-      _printMessage(
-        message,
-        source: 'OPENED FROM TERMINATED STATE',
-      );
+      _printMessage(message, source: 'OPENED FROM TERMINATED STATE');
 
       _handleNotificationTap(message);
     } catch (error) {
       if (kDebugMode) {
-        debugPrint(
-          'Initial FCM message error: $error',
-        );
+        debugPrint('Initial FCM message error: $error');
       }
     }
   }
@@ -677,24 +539,18 @@ class FirebaseMessagingService {
   // ============================================================
 
   @pragma('vm:entry-point')
-  static Future<void>
-      firebaseMessagingBackgroundHandler(
+  static Future<void> firebaseMessagingBackgroundHandler(
     RemoteMessage message,
   ) async {
     try {
       await Firebase.initializeApp(
-        options:
-            DefaultFirebaseOptions.currentPlatform,
+        options: DefaultFirebaseOptions.currentPlatform,
       );
 
       if (kDebugMode) {
         debugPrint('');
-        debugPrint(
-          '========== FCM BACKGROUND MESSAGE ==========',
-        );
-        debugPrint(
-          'MESSAGE ID: ${message.messageId}',
-        );
+        debugPrint('========== FCM BACKGROUND MESSAGE ==========');
+        debugPrint('MESSAGE ID: ${message.messageId}');
         debugPrint(
           'TITLE: '
           '${message.notification?.title ?? 'N/A'}',
@@ -703,19 +559,13 @@ class FirebaseMessagingService {
           'BODY: '
           '${message.notification?.body ?? 'N/A'}',
         );
-        debugPrint(
-          'DATA: ${message.data}',
-        );
-        debugPrint(
-          '============================================',
-        );
+        debugPrint('DATA: ${message.data}');
+        debugPrint('============================================');
         debugPrint('');
       }
     } catch (error) {
       if (kDebugMode) {
-        debugPrint(
-          'FCM background handler error: $error',
-        );
+        debugPrint('FCM background handler error: $error');
       }
     }
   }
@@ -724,27 +574,16 @@ class FirebaseMessagingService {
   // PRINT MESSAGE
   // ============================================================
 
-  void _printMessage(
-    RemoteMessage message, {
-    required String source,
-  }) {
+  void _printMessage(RemoteMessage message, {required String source}) {
     if (!kDebugMode) {
       return;
     }
 
     debugPrint('');
-    debugPrint(
-      '==============================================',
-    );
-    debugPrint(
-      '              FCM MESSAGE',
-    );
-    debugPrint(
-      'SOURCE: $source',
-    );
-    debugPrint(
-      '==============================================',
-    );
+    debugPrint('==============================================');
+    debugPrint('              FCM MESSAGE');
+    debugPrint('SOURCE: $source');
+    debugPrint('==============================================');
 
     debugPrint(
       'MESSAGE ID: '
@@ -771,18 +610,14 @@ class FirebaseMessagingService {
       '${message.notification?.android?.imageUrl ?? 'N/A'}',
     );
 
-    debugPrint(
-      'DATA: ${message.data}',
-    );
+    debugPrint('DATA: ${message.data}');
 
     debugPrint(
       'SENT TIME: '
       '${message.sentTime ?? 'N/A'}',
     );
 
-    debugPrint(
-      '==============================================',
-    );
+    debugPrint('==============================================');
     debugPrint('');
   }
 
@@ -790,20 +625,12 @@ class FirebaseMessagingService {
   // NOTIFICATION TAP
   // ============================================================
 
-  void _handleNotificationTap(
-    RemoteMessage message,
-  ) {
+  void _handleNotificationTap(RemoteMessage message) {
     if (kDebugMode) {
       debugPrint('');
-      debugPrint(
-        '========== FCM NOTIFICATION TAP ==========',
-      );
-      debugPrint(
-        'DATA: ${message.data}',
-      );
-      debugPrint(
-        '==========================================',
-      );
+      debugPrint('========== FCM NOTIFICATION TAP ==========');
+      debugPrint('DATA: ${message.data}');
+      debugPrint('==========================================');
       debugPrint('');
     }
   }
